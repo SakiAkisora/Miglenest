@@ -7,18 +7,18 @@ body{
     width: 5%;
     height: 89.4vh;
     border-right: 2px solid #ccc;
-    transition: width 600ms ease; /* Transición solo para el ancho */
+    transition: width 600ms ease; 
     display: flex;
-    flex-direction: column; /* Asegura que los ítems se alineen verticalmente */
-    align-items: center; /* Centra los ítems horizontalmente */
-    padding-top: 20px; /* Espacio en la parte superior */
-    box-sizing: border-box; /* Incluye el padding en el ancho del contenedor */
+    flex-direction: column;
+    align-items: center; 
+    padding-top: 20px;
+    box-sizing: border-box; 
 }
 
 /* Contenedor cuando el menú está activo */
 .containerAside.active {
     width: 18%;
-    transition: width 300ms ease; /* Transición solo para el ancho */
+    transition: width 300ms ease;
 }
 
 
@@ -27,15 +27,15 @@ body{
     margin-left: 10%;
     display: flex;
     flex-direction: column;
-    gap: 35px; /* Espacio entre ítems por defecto */
+    gap: 35px; 
     align-items: center;
-    width: 100%; /* Asegura que los ítems ocupen todo el ancho del contenedor */
-    transition: gap 600ms ease; /* Añade transición al cambio del espacio entre ítems */
+    width: 100%;
+    transition: gap 600ms ease; 
 }
 
 /* Ajustar el espacio entre ítems cuando el menú está activo */
 .containerAside.active .icons {
-    gap: 35px; /* Espacio reducido entre ítems cuando el menú está activo */
+    gap: 35px;
     margin-left: 5%;
 }
 
@@ -46,9 +46,9 @@ body{
     gap: 10px;
     position: relative;
     transition: all 600ms;
-    width: 100%; /* Asegura que los ítems ocupen todo el ancho disponible */
-    padding: 5px; /* Añade un poco de espacio alrededor de cada ítem */
-    box-sizing: border-box; /* Incluye el padding en el ancho del ítem */
+    width: 100%; 
+    padding: 5px; 
+    box-sizing: border-box; 
 }
 
 /* Estilo para las imágenes de los ítems */
@@ -57,25 +57,6 @@ body{
     transition: all 600ms;
 }
 
-/* Estilo base para el texto de los ítems */
-.icon-item span {
-    font-size: 25px;
-    color: black; /* Color por defecto para todos los textos */
-    transition: all 600ms;
-    display: flex;
-    align-items: center;
-    white-space: nowrap; /* Evita que el texto se parta en varias líneas */
-    visibility: hidden; /* Oculta el texto cuando el menú está cerrado */
-    opacity: 0; /* Hace que el texto sea completamente transparente cuando el menú está cerrado */
-    position: absolute;
-    left: 100%; /* Coloca el texto justo a la derecha del ícono */
-    margin-left: 15px; /* Ajusta la distancia del texto respecto al ícono */
-}
-
-/* Estilo cuando el ítem está activo */
-.icon-item.active span {
-    color: #6312aa; /* Color del texto para el ítem activo */
-}
 
 /* Estilo para el ícono cuando está activo */
 .icon-item.active img {
@@ -88,38 +69,29 @@ body{
     width: 60px;
 }
 
-/* Estilos cuando el menú está activo */
-.containerAside.active .icon-item span {
-    visibility: visible;
-    opacity: 1;
-    position: relative;
-    left: 0;
-    margin-left: 10px; /* Ajusta la distancia del texto respecto al ícono cuando el menú está activo */
-}
 @keyframes slideIn {
     from {
-        transform: translateX(-20px); /* Comienza desde 20px a la derecha */
-        opacity: 0; /* Comienza oculto */
+        transform: translateX(-20px);
+        opacity: 0; 
     }
     to {
-        transform: translateX(0px); /* Termina en su posición original */
-        opacity: 1; /* Termina completamente visible */
+        transform: translateX(0px); 
+        opacity: 1; 
     }
 }
 
 /* Estilo base para el texto de los ítems */
 .icon-item span {
     font-size: 25px;
-    color: black; /* Color por defecto para todos los textos */
+    color: black;
     transition: all 600ms;
     display: flex;
     align-items: center;
-    white-space: nowrap; /* Evita que el texto se parta en varias líneas */
-    visibility: hidden; /* Oculta el texto cuando el menú está cerrado */
-    opacity: 0; /* Hace que el texto sea completamente transparente cuando el menú está cerrado */
+    white-space: nowrap; 
+    visibility: hidden; 
+    opacity: 0; 
     position: absolute;
-    left: 100%; /* Coloca el texto justo a la derecha del ícono */
-    margin-left: 15px; /* Ajusta la distancia del texto respecto al ícono */
+    left: 100%; 
 }
 
 /* Estilos cuando el menú está activo */
@@ -128,11 +100,11 @@ body{
     opacity: 1;
     position: relative;
     left: 0;
-    margin-left: 10px; /* Ajusta la distancia del texto respecto al ícono cuando el menú está activo */
-    animation: slideIn 0.6s ease-out; /* Aplica la animación de deslizamiento */
+    margin-left: 10px; 
+    animation: slideIn 0.6s ease-out; 
 }
 
 /* Estilo cuando el ítem está activo */
 .icon-item.active span {
-    color: #6312aa; /* Color del texto para el ítem activo */
+    color: #6312aa;
 }
