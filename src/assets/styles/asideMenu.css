@@ -1,0 +1,71 @@
+/* Contenedor principal */
+.containerAside {
+    background-color: inherit;
+    width: 5%;
+    height: 89.4vh;
+    border-right: 2px solid #ccc;
+    transition: all 600ms;
+    justify-content: center;
+}
+
+/* Contenedor cuando el menú está activo */
+.containerAside.active {
+    width: 18%;
+    transition: all 600ms;
+}
+
+/* Contenedor de los ítems de icono */
+.icons {
+    display: flex;
+    flex-direction: column; /* Organiza los elementos verticalmente */
+    gap: 20px; /* Espacio entre cada ítem */
+    align-items: center; /* Alinea los ítems horizontalmente en el centro */
+}
+
+/* Estilo base para los ítems de icono */
+.icon-item {
+    display: flex; /* Alinea imagen y texto horizontalmente */
+    align-items: center; /* Alinea el ícono y el texto verticalmente */
+    gap: 10px; /* Espacio entre el ícono y el texto */
+    position: relative; /* Necesario para posicionar el texto con `position: absolute` si es necesario */
+    transition: all 600ms;
+}
+
+/* Estilo para las imágenes de los ítems */
+.icon-item img {
+    width: 55px; /* Tamaño uniforme para todos los íconos */
+    transition: all 600ms;
+    margin-left: 5%;
+}
+
+/* Estilo base para el texto de los ítems */
+.icon-item span {
+    font-size: 25px;
+    color: #6312aa;
+    transition: all 600ms;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilo cuando el menú está activo para cada ítem */
+.icon-item.active img {
+    filter: invert(1);
+    background-color: #9CED55;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 15px 3px #9CED55;
+    transition: all 600ms;
+}
+
+.icon-item.active span {
+    color: #6312aa;
+    transition: all 600ms;
+}
+
+/* Estilos específicos para el ítem settings */
+.icon-item.settings span {
+    position: absolute;
+    margin-top: 28.1%;
+    margin-left: 5%;
+    color: black;
+}
