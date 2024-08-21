@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { HeaderMain } from './complements/header';
-import { AsideMenu } from './complements/AsideMenu';
+import Home from './pages/home';
+import Login from './pages/Login';
 
 function App() {
-  const [isMenuActive, setIsMenuActive] = useState(false);
 
-    const toggleMenu = () => {
-        setIsMenuActive(!isMenuActive);
-    }
   return (
-    <div className="App">
-        <HeaderMain isActive={isMenuActive} toggleMenu={toggleMenu} />
-        <AsideMenu isMenuActive={isMenuActive} />
-        
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/Inicio" element={<Home />} />
+          <Route path="/Login" element={<Login />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

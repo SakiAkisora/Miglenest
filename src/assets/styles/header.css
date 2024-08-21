@@ -28,16 +28,6 @@
     transform-origin: 0px 100%;
     transition: all 600ms;
 }
-.activeline1__bars-menu{
-  transform: rotate(45deg) translate(4px, -4px);
-}
-.activeline2__bars-menu{
-  opacity: 0;
-  margin-left: -30px;
-}
-.activeline3__bars-menu{
-  transform: rotate(-45deg) translate(7px, 3px);
-}
 
 
   .logoContainer {
@@ -47,7 +37,6 @@
     border: none;
     cursor: pointer;
     margin-left: 3%;
-    margin-right: 15%;
   }
   
   .logoContainer #logo img{
@@ -69,6 +58,7 @@
     background-color: white;
     border-radius: 10px;
     margin-right: 13%;
+    margin-left: 15%;
   }
   
   .searchBar input {

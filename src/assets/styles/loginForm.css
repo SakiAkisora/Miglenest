@@ -1,0 +1,277 @@
+body, html{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.video__container {
+    position: relative;
+    height: 100vh;
+}
+
+.video__container video {
+    width: 45%;
+    height: 100vh;
+    object-fit: cover;
+}
+
+.main__panel {
+    position: absolute;
+    background-color: black;
+    width: 45%; 
+    height: 100vh; 
+    top: 0; 
+    left: 0;
+    opacity: 0.5; 
+}
+.main__logo {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    opacity: 1;
+}
+
+.main__logo img {
+    width: 20%;
+    margin-left: 0%;
+    opacity: 1;
+}
+#name__logo{
+    position: absolute;
+    display: flex;
+    color: white;
+    margin-top: 20%;
+    font-size: 60px;
+    font-family: Clockwise, sans-serif;
+}
+#description{
+    position: absolute;
+    display: flex;
+    color: white;
+    margin-top: 30%;
+    padding: 5%;
+    font-size: 20px;
+}
+
+.select__account__options {
+    position: absolute;
+    top: 10%;
+    left: 45%;
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; 
+    background-color: white; 
+    border-radius: 10px;
+    transition: all 600ms;
+}
+.select__account__options.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+.select__account__options.hidden{
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+#starting{
+    color: #6312aa;
+    font-family: Clockwise, sans-serif;
+    font-size: 50px;
+    margin-bottom: 10%;
+    justify-content: center;
+}
+#question{
+    font-size: 25px;
+    margin-bottom: 3%;
+}
+.btnLogin{
+    background-color: #6312aa;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 20px;
+    border: none;
+    margin-bottom: 5%;
+}
+.btnRegister{
+    background-color: #6312aa;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 20px;
+    border: none;
+}
+
+.container__login{
+    position: absolute;
+    top: 10%;
+    left: 45%;
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; 
+    background-color: white; 
+    border-radius: 10px;
+    transition: all 600ms;
+}
+.container__login.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+.container__login.hidden{
+    opacity: 0;
+    transform: translateY(-100%);
+}
+.back{
+    background-color: inherit;
+    border: none;
+    position: absolute;
+    top: -9%;
+    left: 3%;
+}
+.back span{
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: black;
+    margin-top: 12px;
+    transform-origin: 0px 100%;
+    transition: all 600ms;
+}
+#line1{
+    transform: rotate(45deg) translate(10px, 4px);
+}
+#line2{
+    transform: rotate(-45deg) translate(7px, 0px);
+}
+.login__form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p{
+        color: #6312aa;
+        font-family: Clockwise, sans-serif;
+        font-size: 50px;
+        margin-bottom: 20%;
+    }
+    input{
+        width: 90%;
+        font-size: 20px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        margin-bottom: 10%;
+        padding: 10px;
+        outline: none;
+    }
+    input:focus{
+        width: 90%;
+        font-size: 20px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        margin-bottom: 10%;
+        padding: 10px;
+    }
+    button{
+        background-color: #6312aa;
+        color: white;
+        font-size: 30px;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        margin-bottom: 30%;
+        margin-top: 5%;
+    }
+}
+.options__account{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5%;
+    a{
+        color: #6312aa;
+        text-decoration: none;
+        font-family: Clockwise, sans-serif;
+    }
+}
+
+.container__signup{
+    position: absolute;
+    top: 0%;
+    left: 45%;
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; 
+    background-color: white; 
+    border-radius: 10px;
+    transition: all 600ms;
+}
+.container__signup.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+.container__signup.hidden{
+    opacity: 0;
+    transform: translateY(-100%);
+}
+.signup__form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p{
+        color: #6312aa;
+        font-family: Clockwise, sans-serif;
+        font-size: 50px;
+        margin-bottom: 10%;
+    }
+    input{
+        width: 90%;
+        font-size: 20px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        margin-bottom: 9%;
+        padding: 10px;
+        outline: none;
+    }
+    input:focus{
+        width: 90%;
+        font-size: 20px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        margin-bottom: 10%;
+        padding: 10px;
+    }
+    button{
+        background-color: #6312aa;
+        color: white;
+        font-size: 30px;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        margin-bottom: 5%;
+        margin-top: 0%;
+    }
+}
+.back2{
+    background-color: inherit;
+    border: none;
+    position: absolute;
+    top: 2%;
+    left: 3%;
+}
+.back2 span{
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: black;
+    margin-top: 12px;
+    transform-origin: 0px 100%;
+    transition: all 600ms;
+}
