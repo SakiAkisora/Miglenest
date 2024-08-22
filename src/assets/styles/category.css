@@ -1,0 +1,12 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.texto{
+    position: absolute;
+    top: 12%;
+    left: 19%;
+    transition: all 0ms;
+}

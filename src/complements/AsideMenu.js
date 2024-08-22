@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import home from '../assets/image/homeIcon.png';
 import category from '../assets/image/category.png';
 import saved from '../assets/image/favorite.png';
@@ -9,9 +10,35 @@ import '../assets/styles/asideMenu.css';
 
 export const AsideMenu = ({ isMenuActive }) => {
     const [activeItem, setActiveItem] = useState('home');
+    const navigate = useNavigate(); // Inicializa useNavigate
 
     const handleIconClick = (item) => {
         setActiveItem(item);
+
+        // Redirige según el ítem clicado
+        switch (item) {
+            case 'home':
+                navigate('/home');
+                break;
+            case 'category':
+                navigate('/category');
+                break;
+            case 'saved':
+                navigate('/saved'); // Asegúrate de tener una ruta para esto
+                break;
+            case 'likes':
+                navigate('/likes'); // Asegúrate de tener una ruta para esto
+                break;
+            case 'settings':
+                navigate('/settings'); // Asegúrate de tener una ruta para esto
+                break;
+            case 'info':
+                navigate('/info'); // Asegúrate de tener una ruta para esto
+                break;
+            default:
+                navigate('/home');
+                break;
+        }
     };
 
     return (

@@ -1,17 +1,60 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/main';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { HeaderMain } from './complements/header';
+import { AsideMenu } from './complements/AsideMenu';
+import Home from './pages/home';
+import Category from './pages/category';
 import Login from './pages/Login';
 
-function App() {
+function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <Router>
+    <TransitionGroup>
+      <CSSTransition key={location.key} classNames="fade" timeout={300}>
+        <Routes location={location}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/category" element={<Category />} />
+        </Routes>
+      </CSSTransition>
+    </TransitionGroup>
+  );
+}
+
+function Layout() {
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuActive(!isMenuActive);
+  };
+
+  return (
+    <>
+      <HeaderMain isActive={isMenuActive} toggleMenu={toggleMenu} />
+      <AsideMenu isMenuActive={!isMenuActive} />
+      <AnimatedRoutes />
+    </>
+  );
+}
+
+function App() {
+  return (  
+    <div>
       <Routes>
-        <Route path="/home" element={<Home />} />
+        <Route path="/*" element={<Layout />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+    </div>
+  );
+}
+
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
     </Router>
   );
 }
 
-export default App;
+export default AppWrapper;

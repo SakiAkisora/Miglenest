@@ -2,10 +2,12 @@ body, html{
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    max-height: 100vh;
 }
 .video__container {
     position: relative;
     height: 100vh;
+    overflow: hidden;
 }
 
 .video__container video {
@@ -101,6 +103,7 @@ body, html{
     border-radius: 20px;
     font-size: 20px;
     border: none;
+    margin-bottom: 20%;
 }
 
 .container__login{
@@ -190,7 +193,6 @@ body, html{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 5%;
     a{
         color: #6312aa;
         text-decoration: none;

@@ -3,8 +3,16 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/image/Icon2.png';
 import lupa from '../assets/image/search.png';
 import '../assets/styles/header.css';
+import { useNavigate } from 'react-router-dom';
+
 
 export const HeaderMain = ({ isActive, toggleMenu }) => {
+    const navigate = useNavigate();  
+
+  const handleLoginClick = () => {
+    navigate('/login'); // Navegar a la página de login sin animaciones
+  };
+
     return (
         <div>
             <div className="containerHeader">
@@ -31,9 +39,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
                 </div>
                 <div className="sesion">
                     <div className="acceder">
-                        <Link to="/Login">
-                            <button className="btnAcceder">Acceder</button>
-                        </Link>
+                            <button onClick={handleLoginClick} className="btnAcceder">Acceder</button>
                     </div>
                 </div>
             </div>

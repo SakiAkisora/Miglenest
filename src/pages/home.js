@@ -4,9 +4,10 @@ import { ErrorPost } from '../complements/errorPost';
 
 export const Home = () => {
   return (
-    <div>
+    <div className='HomePage'>
         <ErrorPost/>
         <AsideRight/>
     </div>
   )
 }
+export default Home;

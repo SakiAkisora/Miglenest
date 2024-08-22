@@ -6,6 +6,10 @@
     align-items: center;
     padding: 0px 10px 10px 10px;
   }
+@font-face {
+  font-family: 'Clockwise';
+  src: url('../fonts/Clockwise.otf') format('opentype');
+}       
 
   .bars__menu{
     position: relative;

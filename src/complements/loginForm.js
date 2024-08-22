@@ -39,6 +39,9 @@ export const LoginForm = () => {
           <button onClick={() => { toggleVisibility(); toggleLogin(); }} className='btnLogin'>Iniciar sesión</button>
           <span id='question'>Crear una cuenta</span>
           <button onClick={() => { toggleVisibility(); toggleRegister(); }} className='btnRegister'>Registrarme</button>
+          <div className='options__account'>
+                <span><a href='/home'>Volver a inicio</a></span>
+              </div>
         </div>
         <div className={`container__login ${isVisibleLogin ? 'visible' : 'hidden'}`}>
           <div className='background__color'>
@@ -57,7 +60,7 @@ export const LoginForm = () => {
               </form>
               <div className='options__account'>
                 <span><a href='#'>¿Olvidaste tu contraseña?</a></span>
-                <span><a href='/Inicio'>Volver a inicio</a></span>
+                <span><a href='/home'>Volver a inicio</a></span>
               </div>
             </div>
           </div>
@@ -82,7 +85,7 @@ export const LoginForm = () => {
               </form>
               <div className='options__account'>
                 <span><a href='#'>¿Olvidaste tu contraseña?</a></span>
-                <span><a href='/Inicio'>Volver a inicio</a></span>
+                <span><a href='/home'>Volver a inicio</a></span>
               </div>
             </div>
           </div>
