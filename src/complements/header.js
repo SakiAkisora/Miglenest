@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/image/Icon2.png';
-import lupa from '../assets/image/buscar.png';
+import lupa from '../assets/image/search.png';
 import '../assets/styles/header.css';
 
 export const HeaderMain = ({ isActive, toggleMenu }) => {

@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
-import { HeaderMain } from '../complements/header';
-import { AsideMenu } from '../complements/AsideMenu';
+import React from 'react'
+import { AsideRight } from '../complements/AsideRight';
+import { ErrorPost } from '../complements/errorPost';
 
-function Home() {
-  const [isMenuActive, setIsMenuActive] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuActive(!isMenuActive);
-  };
-  return(
+export const Home = () => {
+  return (
     <div>
-      <HeaderMain isActive={isMenuActive} toggleMenu={toggleMenu} />
-      <AsideMenu isMenuActive={!isMenuActive} />
+        <ErrorPost/>
+        <AsideRight/>
     </div>
-  );
+  )
 }
-
-export default Home;

@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import './App.css';
-import Home from './pages/home';
+import Home from './pages/main';
 import Login from './pages/Login';
 
 function App() {
-
   return (
     <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/Inicio" element={<Home />} />
-          <Route path="/Login" element={<Login />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </Router>
   );
 }

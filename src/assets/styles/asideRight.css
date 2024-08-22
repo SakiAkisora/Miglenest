@@ -1,0 +1,45 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: 0;
+}
+.aside__container{
+    position: absolute;
+    top: 10.6%;
+    right: 0%;
+    border-left: 2px solid #ccc;
+    height: 89.4vh;
+    width: 25%;
+    background-color: inherit;
+    padding: 1%;
+}
+.container__accounts{
+    border: 2px solid #ccc;
+    padding: 0% 5% 5% 5%;
+    margin-bottom: 5%;
+    h2{
+        font-size: 20px;
+        color: #6312aa;
+        margin-bottom: 2%;
+    }
+}
+.container__topics{
+    border: 2px solid #ccc;
+    padding: 0% 5% 5% 5%;
+    margin-bottom: 5%;
+    h2{
+        font-size: 20px;
+        color: #6312aa;
+        margin-bottom: 2%;
+    }
+}
+.container__ideas{
+    border: 2px solid #ccc;
+    padding: 0% 5% 5% 5%;
+    margin-bottom: 5%;
+    h2{
+        font-size: 20px;
+        color: #6312aa;
+        margin-bottom: 2%;
+    }
+}

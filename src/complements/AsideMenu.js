@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import home from '../assets/image/casa.png';
-import category from '../assets/image/etiqueta.png';
-import saved from '../assets/image/estrella.png';
-import likes from '../assets/image/corazon.png';
-import settings from '../assets/image/configuraciones.png';
-import info from '../assets/image/lentes.png';
+import home from '../assets/image/homeIcon.png';
+import category from '../assets/image/category.png';
+import saved from '../assets/image/favorite.png';
+import likes from '../assets/image/heart.png';
+import settings from '../assets/image/settings.png';
+import info from '../assets/image/help.png';
 import '../assets/styles/asideMenu.css';
 
 export const AsideMenu = ({ isMenuActive }) => {
