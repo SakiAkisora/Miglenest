@@ -1,10 +1,15 @@
 
+a{
+  text-decoration: none;
+}
 .containerHeader {
+    position: fixed;
     background-color: #6312aa;
     width: 100%;
     display: flex;
     align-items: center;
     padding: 0px 10px 10px 10px;
+    top: 0;
   }
 @font-face {
   font-family: 'Clockwise';
@@ -41,6 +46,7 @@
     border: none;
     cursor: pointer;
     margin-left: 3%;
+    
   }
   
   .logoContainer #logo img{
@@ -53,6 +59,7 @@
     font-size: 40px;
     color: white;
     font-family: 'Clockwise';
+    
   }
   .searchBar {
     margin-top: 10px;

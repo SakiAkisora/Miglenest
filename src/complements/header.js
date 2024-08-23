@@ -12,7 +12,6 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
   const handleLoginClick = () => {
     navigate('/login'); // Navegar a la página de login sin animaciones
   };
-
     return (
         <div>
             <div className="containerHeader">
@@ -22,7 +21,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
                     <span className={`line3 ${isActive ? 'activeline3__bars-menu' : ''}`}></span>
                 </button>
  
-                <Link to="/Inicio">
+                <Link to="/home">
                     <button className="logoContainer">
                         <div id="logo">
                             <img src={logo} alt="Logo" />

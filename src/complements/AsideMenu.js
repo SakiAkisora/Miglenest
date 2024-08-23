@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import React, { useState, useEffect } from 'react';
+import { useNavigate,useLocation }  from 'react-router-dom';
 import home from '../assets/image/homeIcon.png';
 import category from '../assets/image/category.png';
 import saved from '../assets/image/favorite.png';
@@ -8,32 +8,48 @@ import settings from '../assets/image/settings.png';
 import info from '../assets/image/help.png';
 import '../assets/styles/asideMenu.css';
 
-export const AsideMenu = ({ isMenuActive }) => {
-    const [activeItem, setActiveItem] = useState('home');
-    const navigate = useNavigate(); // Inicializa useNavigate
+export const AsideMenu = ({ isMenuActive, setIsMenuActive }) => {
+    const [activeItem, setActiveItem] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const path = location.pathname.split('/')[1];
+        setActiveItem(path);
+    }, [location]);
 
     const handleIconClick = (item) => {
         setActiveItem(item);
-
-        // Redirige según el ítem clicado
         switch (item) {
             case 'home':
                 navigate('/home');
+                setActiveItem('home');
+                setIsMenuActive(true);
                 break;
             case 'category':
-                navigate('/category');
+                navigate('/category')
+                setActiveItem('category');
+                setIsMenuActive(true);
                 break;
             case 'saved':
-                navigate('/saved'); // Asegúrate de tener una ruta para esto
+                navigate('/saved'); 
+                setActiveItem('saved');
+                setIsMenuActive(true);
                 break;
             case 'likes':
-                navigate('/likes'); // Asegúrate de tener una ruta para esto
+                navigate('/likes');
+                setActiveItem('likes');
+                setIsMenuActive(true);
                 break;
             case 'settings':
-                navigate('/settings'); // Asegúrate de tener una ruta para esto
+                navigate('/settings');
+                setActiveItem('settings');
+                setIsMenuActive(false);
                 break;
             case 'info':
-                navigate('/info'); // Asegúrate de tener una ruta para esto
+                navigate('/info');
+                setActiveItem('info');
+                setIsMenuActive(false);
                 break;
             default:
                 navigate('/home');

@@ -3,7 +3,9 @@ body{
 }
 
 .containerAside {
+    position: fixed;
     background-color: inherit;
+    top: 10.6%;
     width: 5%;
     height: 89.4vh;
     border-right: 2px solid #ccc;
