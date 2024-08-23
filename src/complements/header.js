@@ -21,7 +21,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
                     <span className={`line2 ${isActive ? 'activeline2__bars-menu' : ''}`}></span>
                     <span className={`line3 ${isActive ? 'activeline3__bars-menu' : ''}`}></span>
                 </button>
-
+ 
                 <Link to="/Inicio">
                     <button className="logoContainer">
                         <div id="logo">
