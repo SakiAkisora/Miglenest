@@ -8,6 +8,7 @@ import Category from './pages/category';
 import Login from './pages/Login';
 import VideosSaved from './pages/VideoSaved';
 import VideosLiked from './pages/VideosLiked';
+import { Configuration } from './pages/configuration';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -20,12 +21,12 @@ function AnimatedRoutes() {
           <Route path="/category" element={<Category />} />
           <Route path="/saved" element={<VideosSaved />} />
           <Route path= "/likes" element={<VideosLiked />} />
+          <Route path="/settings" element={<Configuration />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>
   );
 }
-
 function Layout() {
   const [isMenuActive, setIsMenuActive] = useState(true);
 

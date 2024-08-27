@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import logo from '../assets/image/Iconblanco.png';
 import logo2 from '../assets/image/LetraBlanca.png';
 import videoMuestra from '../assets/image/VideoMuestra.mp4'
 

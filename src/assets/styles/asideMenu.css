@@ -15,6 +15,7 @@ body{
     align-items: center; 
     padding-top: 20px;
     box-sizing: border-box; 
+    z-index: 1000;
 }
 
 /* Contenedor cuando el menú está activo */

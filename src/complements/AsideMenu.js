@@ -37,7 +37,7 @@ export const AsideMenu = ({ isMenuActive, setIsMenuActive }) => {
                 setIsMenuActive(true);
                 break;
             case 'likes':
-                navigate('/likes');
+                navigate('/likes'); 
                 setActiveItem('likes');
                 setIsMenuActive(true);
                 break;
