@@ -1,69 +1,25 @@
 import React, {useState} from 'react'
-import '../assets/styles/asideConfig.css'
-import { NoAccountError } from './NoAccountError';
+import { useNavigate } from 'react-router-dom';
 
 export const AsideConfig = () => {
-  const [isAccountVisible, setIsAccountVisible] = useState(true);
-  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
-  const [isLanguageVisible, setIsLanguageVisible] = useState(false);
-  const [isPrivacyVisible, setIsPrivacyVisible] = useState(false);
-  const [isAdvConfigVisible, setIsAdvConfigVisible] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleAccount =() =>{
-      setIsAccountVisible(!isAccountVisible);
-  }
-  const toggleNotification =() =>{
-      setIsNotificationVisible(!isNotificationVisible);
-  }
-  const toggleLanguage =() =>{
-      setIsLanguageVisible(!isLanguageVisible);
-  }
-  const togglePrivacy =() =>{
-      setIsPrivacyVisible(!isPrivacyVisible);
-  }
-  const toggleAdvConfig =() =>{
-      setIsAdvConfigVisible(!isAdvConfigVisible);
+  const HandleNavigate = (path) => {
+    navigate(path);
   }
   
   return (
     <div>
-        <div className='config__container'>
-            <h2>Configuracion</h2>
+        <div className='fixed top-[12.2%] h-[87.8vh] left-[5%] w-1/4 z-0 flex flex-col border-r-2 border-gray-300'>
+            <h2 className='p-2 text-2xl border-b-2 border-gray-300'><b>Configuracion</b></h2>
             <div className='config__buttons'>
-                <button id='account'>Cuenta</button>
-                <button id='notifications'>Notificaciones</button>
-                <button id='language'>Idioma</button>
-                <button id='privacy'>Privacidad</button>
-                <button id='advanced__config'>Configuracion avanzada</button>
+                <button className='w-full text-left p-2.5 text-lg border-b-2 border-gray-300' id='account' onClick={() => HandleNavigate('settings/account')}>Cuenta</button>
+                <button className='w-full text-left p-2.5 text-lg border-b-2 border-gray-300' id='notifications' onClick={() => HandleNavigate('settings/notifications')}>Notificaciones</button>
+                <button className='w-full text-left p-2.5 text-lg border-b-2 border-gray-300' id='language'>Idioma</button>
+                <button className='w-full text-left p-2.5 text-lg border-b-2 border-gray-300' id='privacy'>Privacidad</button>
+                <button className='w-full text-left p-2.5 text-lg border-b-2 border-gray-300' id='advanced__config'>Configuracion avanzada</button>
             </div>
         </div>
-          <div className={`account ${isAccountVisible ? 'visible' : ''}`}>
-              
-              <div className='no-Account'>
-                <NoAccountError/>
-              </div>
-          </div>
-          <div className={`notifications ${isNotificationVisible ? 'visible' : ''}`}>
-              
-              <div className='no-Account'>
-                <NoAccountError/>
-              </div>
-          </div>
-          <div className={`change__language ${isLanguageVisible ? 'visible' : ''}`}>
-            <button>Español - Spanish</button>
-            <button>English - Inglés</button>
-          </div>
-          <div className={`privacy ${isPrivacyVisible ? 'visible' : ''}`}>
-              <div className='privacy__content'>
-                blah blah blah
-              </div>
-          </div>
-          <div className={`advanced__config ${isAdvConfigVisible ? 'visible' : ''} `}>
-              
-                <div className='no-Account'>
-                  <NoAccountError/>
-              </div>
-          </div>
     </div>
   )
 }
