@@ -1,0 +1,92 @@
+[33mcommit 30888efc5acb17e94d69987b320625262d12f460[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 28 21:31:56 2024 -0600
+
+    Avance hoy... nada interesante
+
+[33mcommit 14e719f3a02f9999a35597e0f6defbaef795e1de[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 28 18:18:37 2024 -0600
+
+    Dios apiadate de mi, hago este backup antes de empezar de nuevo con el backend
+
+[33mcommit c427122838c5c052494868471617cd860ec53d06[m
+Merge: 3833a2b de49f79
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 28 13:22:50 2024 -0600
+
+    Merge branch 'master' of https://github.com/SakiAkisora/Miglenest
+
+[33mcommit 3833a2b4e1e527b5e9603566460bc1bcd3f0d469[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 28 13:22:23 2024 -0600
+
+    guardando de manera temporal
+
+[33mcommit de49f79c969d7b7093cc14a04602157bc6c1550d[m
+Author: Deme05 <angeldmvp250505@gmail.com>
+Date:   Tue Aug 27 18:36:18 2024 -0600
+
+    se subio el archivo de la tabla de la base de datos
+    
+    esta base de datos aunque se considere completa hasta el momento esta renuente a sufrir cambios conforme se vaya necesitando o conforme se requiera actualizar la seguridad de la base
+
+[33mcommit 142725ceba175a88abe5a6a6ba0977071b22a051[m
+Author: SakiAkisora <akisorasakich@gmail.com>
+Date:   Tue Aug 27 14:12:38 2024 -0600
+
+    Se añadieron las configuraciones de la pagina, errores y nuevos iconos
+
+[33mcommit 126b75794e7579093f3399f742919a26bc12ca0e[m
+Author: SakiAkisora <akisorasakich@gmail.com>
+Date:   Fri Aug 23 14:20:12 2024 -0600
+
+    Se agregaron configuraciones extra al asideMenu, y se agregaron las paginas de categorias, tus megusta y tus guardados (solo son errores, aun no hay videos ni categorias)
+
+[33mcommit 2cef1da2e5d6f6534a1f4247d0b998c507976f44[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Fri Aug 23 11:28:02 2024 -0600
+
+    modificacion de categoria
+
+[33mcommit 6916b9685a2c7b93b0a31bba92c37222acdbff8e[m
+Author: SakiAkisora <akisorasakich@gmail.com>
+Date:   Thu Aug 22 14:46:15 2024 -0600
+
+    Pequenia actualizacion al codigo, y se agrego que se pueda cambiar entre paginas con el aside sin necesidad de recargar toda la pagina
+
+[33mcommit 3e40a557c16b1dff51fbdbada97d8b17c8bbfebd[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 21 19:44:10 2024 -0600
+
+    Se agrego el contenido de Inicio, esta el asideRight que contiene Cuentas que sigues, tendencias y recomendaciones
+
+[33mcommit 64d28f16f654f07e2dad548f4c202a2889ffc5be[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 21 00:34:54 2024 -0600
+
+    Se ha creado la pagina de inicio y registro de sesion, tambien se manejan direcciones como /Login y /Inicio. Se actualizo el asie y el header, ahora muestra por default el aside abierto y ya no hay animacion en las barras. En la carpeta App.js se manejan las direcciones de navegacion y en pages se manejan las paginas completas con las cuales se navega en App.js, en complements estan los complementos que conforman las paginas en pages. App.js solo las manda a llamar
+
+[33mcommit 1792deafe7c710a8d26377bacfc40e50d386c611[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Fri Aug 16 22:36:07 2024 -0600
+
+    Agrege algunos comentarios utiles
+
+[33mcommit 862708699d9253e264024f7749b58a27555c80b4[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Fri Aug 16 22:26:37 2024 -0600
+
+    Modificacion del menu lateral
+
+[33mcommit 5f03ca40c090b16e72dac3fdc3d1f2c39471a84d[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Fri Aug 16 20:33:47 2024 -0600
+
+    El inicio del proyecto ya con el main
+
+[33mcommit 81774c73573b8266c59fb8759b59c832e71064c4[m
+Author: Saki Akisora <akisorasakich@gmail.com>
+Date:   Wed Aug 14 14:21:40 2024 -0600
+
+    Initialize project using Create React App
