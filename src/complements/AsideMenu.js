@@ -47,7 +47,7 @@ export const AsideMenu = ({ isMenuActive, setIsMenuActive }) => {
                 setIsMenuActive(false);
                 break;
             case 'info':
-                navigate('/info');
+                navigate('/information');
                 setActiveItem('info');
                 setIsMenuActive(false);
                 break;

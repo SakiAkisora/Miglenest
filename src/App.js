@@ -10,6 +10,7 @@ import VideosSaved from './pages/VideoSaved';
 import VideosLiked from './pages/VideosLiked';
 import { Configuration } from './pages/configuration';
 import './App.css';
+import { Information } from './pages/information';
 
 
 function AnimatedRoutes() {
@@ -24,11 +25,13 @@ function AnimatedRoutes() {
           <Route path="/saved" element={<VideosSaved />} />
           <Route path="/likes" element={<VideosLiked />} />
           <Route path="/settings/*" element={<Configuration />} />
+          <Route path="/information/*" element={<Information />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>
   );
 }
+
 function Layout() {
   const [isMenuActive, setIsMenuActive] = useState(true);
 
