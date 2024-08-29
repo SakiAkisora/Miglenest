@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { HeaderMain } from './complements/header';
@@ -17,12 +17,12 @@ function AnimatedRoutes() {
 
   return (
     <TransitionGroup>
-      <CSSTransition key={location.key} classNames="fade">
+      <CSSTransition key={location.key} classNames="fade" timeout={0}>
         <Routes location={location}>
           <Route path="/home" element={<Home />} />
           <Route path="/category" element={<Category />} />
           <Route path="/saved" element={<VideosSaved />} />
-          <Route path= "/likes" element={<VideosLiked />} />
+          <Route path="/likes" element={<VideosLiked />} />
           <Route path="/settings/*" element={<Configuration />} />
         </Routes>
       </CSSTransition>
@@ -46,7 +46,7 @@ function Layout() {
 }
 
 function App() {
-  return (  
+  return (
     <div>
       <Routes>
         <Route path="/*" element={<Layout />} />
