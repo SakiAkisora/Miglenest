@@ -56,7 +56,7 @@ body, html{
 
 .select__account__options {
     position: absolute;
-    top: 10%;
+    top: 5%;
     left: 45%;
     width: 55%;
     display: flex;
@@ -108,7 +108,7 @@ body, html{
 
 .container__login{
     position: absolute;
-    top: 10%;
+    top: 5%;
     left: 45%;
     width: 55%;
     display: flex;
@@ -131,7 +131,7 @@ body, html{
     background-color: inherit;
     border: none;
     position: absolute;
-    top: -9%;
+    top: -3%;
     left: 3%;
 }
 .back span{
@@ -165,6 +165,7 @@ body, html{
         border-top: none;
         border-left: none;
         border-right: none;
+        border-bottom: 3px solid #ccc;
         margin-bottom: 10%;
         padding: 10px;
         outline: none;
@@ -175,6 +176,7 @@ body, html{
         border-top: none;
         border-left: none;
         border-right: none;
+        border-bottom: 3px solid #ccc;
         margin-bottom: 10%;
         padding: 10px;
     }
@@ -229,7 +231,7 @@ body, html{
         color: #6312aa;
         font-family: Clockwise, sans-serif;
         font-size: 50px;
-        margin-bottom: 10%;
+        margin-bottom: 8%;
     }
     input{
         width: 90%;
@@ -237,7 +239,8 @@ body, html{
         border-top: none;
         border-left: none;
         border-right: none;
-        margin-bottom: 9%;
+        border-bottom: 3px solid #ccc;
+        margin-bottom: 6%;
         padding: 10px;
         outline: none;
     }
@@ -247,7 +250,7 @@ body, html{
         border-top: none;
         border-left: none;
         border-right: none;
-        margin-bottom: 10%;
+        margin-bottom: 6%;
         padding: 10px;
     }
     button{

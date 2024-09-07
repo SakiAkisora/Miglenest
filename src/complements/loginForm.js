@@ -26,7 +26,7 @@ export const LoginForm = () => {
           <video src={videoMuestra} autoPlay loop></video>
           <div className='main__panel'>
             <div className='main__logo'>
-              <img src={logo2}></img>
+              <img src={logo2} alt='Logo of miglenest transparent'></img>
               <span id='name__logo'>Miglenest</span>
               <span id='description'>En Miglenest, aprende, crea y disfruta mientras exploras nuevas ideas. Únete a una comunidad apasionada por el conocimiento y la creatividad, y encuentra inspiración para aprender algo nuevo cada día.</span>
             </div>

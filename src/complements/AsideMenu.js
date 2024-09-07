@@ -42,12 +42,12 @@ export const AsideMenu = ({ isMenuActive, setIsMenuActive }) => {
                 setIsMenuActive(true);
                 break;
             case 'settings':
-                navigate('/settings');
+                navigate('/settings/account');
                 setActiveItem('settings');
                 setIsMenuActive(false);
                 break;
             case 'info':
-                navigate('/information');
+                navigate('/information/about-us');
                 setActiveItem('info');
                 setIsMenuActive(false);
                 break;
