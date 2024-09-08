@@ -1,16 +1,16 @@
 
-create database minglenest;
+create database miglenest;
 
-\c minglenest
+\c miglenest
 
 create table usuario(
-    id_usuario int primary key ,
+    id_usuario serial primary key ,
     username varchar(50) unique not null,
     email varchar(255) unique not null,
     password varchar(255) not null,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     profile_img text default 'default.png',
-    descripcion varchar (300) not null
+    descripcion varchar (300)
 );
 
 create table categoria(

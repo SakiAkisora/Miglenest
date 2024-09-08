@@ -4,6 +4,11 @@ import videoMuestra from '../assets/image/VideoMuestra.mp4'
 
 export const LoginForm = () => {
 
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+
   const [isVisible, setIsVisible] = useState(true);
   const [isVisibleLogin, setIsVisibleLogin] = useState(false);
   const [isVisibleRegister, setIsVisibleRegister] = useState(false);
@@ -18,6 +23,43 @@ export const LoginForm = () => {
   const toggleRegister = () => {
     setIsVisibleRegister(!isVisibleRegister);
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== passwordConfirm) {
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:4000/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password,
+                passwordConfirm,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Registro exitoso');
+            // Limpiar campos o redirigir a otra página
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error al enviar datos', error);
+        alert('Error al registrar usuario');
+    }
+};
+
 
   return (
     <div>
@@ -73,13 +115,35 @@ export const LoginForm = () => {
                   <span id='line2'></span>
                 </button>
               </div>
-              <form className='signup__form'>
+              <form className='signup__form' onSubmit={handleSubmit}>
                 <p id='action'>Inicio de Sesión</p>
-                <input className='name' placeholder='Escriba su nombre'></input>
-                <input className='username' placeholder='Escriba un usuario'></input>
-                <input className='email' placeholder='Escriba su correo' type='mail'></input>
-                <input type='password' placeholder='Escriba su contraseña' className='password'></input>
-                <input type='password' placeholder='Confirme su contraseña' className='password__confirm'></input>
+                <input 
+                  className='username' 
+                  placeholder='Escriba un usuario' 
+                  value = {username}
+                  onChange={(e) => setUsername(e.target.value)} required
+                />
+                <input 
+                  className='email' 
+                  placeholder='Escriba su correo' 
+                  type='email'
+                  value = {email}
+                  onChange={(e) => setEmail(e.target.value)} required
+                  />
+                <input 
+                  type='password' 
+                  placeholder='Escriba su contraseña' 
+                  className='password'
+                  value = {password}
+                  onChange={(e) => setPassword(e.target.value)} required
+                  />
+                <input 
+                  type='password' 
+                  placeholder='Confirme su contraseña' 
+                  className='password__confirm'
+                  value={passwordConfirm}
+                  onChange={(e) => setPasswordConfirm(e.target.value)} required
+                  />
                 <button className='btn'>Registrarme</button>
               </form>
               <div className='options__account'>
