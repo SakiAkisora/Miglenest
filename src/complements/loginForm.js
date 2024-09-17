@@ -58,6 +58,40 @@ export const LoginForm = () => {
         console.error('Error al enviar datos', error);
         alert('Error al registrar usuario');
     }
+
+
+    const handleLogin = async (e) => {
+      e.preventDefault();
+    
+      const credentials = {
+        username: username,
+        password: password,
+      };
+    
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          // Almacenar el token de autenticación en localStorage o cookies
+          localStorage.setItem('token', data.token);
+          // Redirigir a la página de inicio o dashboard
+          window.location.href = '/home';
+        } else {
+          alert('Credenciales incorrectas');
+        }
+      } catch (error) {
+        console.error('Error al enviar datos', error);
+        alert('Error al iniciar sesión');
+      }
+    }; 
 };
 
 
