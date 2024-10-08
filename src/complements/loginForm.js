@@ -8,6 +8,7 @@ export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [emailOrUsername, setEmailOrUsername] = useState('');
 
   const [isVisible, setIsVisible] = useState(true);
   const [isVisibleLogin, setIsVisibleLogin] = useState(false);
@@ -28,72 +29,67 @@ export const LoginForm = () => {
     e.preventDefault();
 
     if (password !== passwordConfirm) {
-        alert('Las contraseñas no coinciden');
-        return;
+      alert('Las contraseñas no coinciden');
+      return;
     }
 
     try {
-        const response = await fetch('http://localhost:4000/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username,
-                email,
-                password,
-                passwordConfirm,
-            }),
-        });
+      const response = await fetch('http://localhost:4000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          passwordConfirm,
+        }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-            alert('Registro exitoso');
-            // Limpiar campos o redirigir a otra página
-        } else {
-            alert(`Error: ${data.message}`);
-        }
+      if (response.ok) {
+        alert('Registro exitoso');
+        // Limpiar campos o redirigir a otra página
+      } else {
+        alert(`Error: ${data.message}`);
+      }
     } catch (error) {
-        console.error('Error al enviar datos', error);
-        alert('Error al registrar usuario');
+      console.error('Error al enviar datos', error);
+      alert('Error al registrar usuario');
     }
 
+  };
 
-    const handleLogin = async (e) => {
-      e.preventDefault();
-    
-      const credentials = {
-        username: username,
-        password: password,
-      };
-    
-      try {
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(credentials),
-        });
-    
-        const data = await response.json();
-    
-        if (response.ok) {
-          // Almacenar el token de autenticación en localStorage o cookies
-          localStorage.setItem('token', data.token);
-          // Redirigir a la página de inicio o dashboard
-          window.location.href = '/home';
-        } else {
-          alert('Credenciales incorrectas');
-        }
-      } catch (error) {
-        console.error('Error al enviar datos', error);
-        alert('Error al iniciar sesión');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    console.log('Email:', email);
+    console.log('Password:', password);
+
+    try {
+      const response = await fetch('http://localhost:4000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
       }
-    }; 
-};
 
+      const data = await response.json();
+      console.log('Inicio de sesión exitoso:', data); // Maneja el éxito del inicio de sesión
+    } catch (error) {
+      console.error('Error en la solicitud de inicio de sesión:', error);
+    }
+  };
+
+  // Manejo de cambios de entrad
 
   return (
     <div>
@@ -115,8 +111,8 @@ export const LoginForm = () => {
           <span id='question'>Crear una cuenta</span>
           <button onClick={() => { toggleVisibility(); toggleRegister(); }} className='btnRegister'>Registrarme</button>
           <div className='options__account'>
-                <span><a href='/home'>Volver a inicio</a></span>
-              </div>
+            <span><a href='/home'>Volver a inicio</a></span>
+          </div>
         </div>
         <div className={`container__login ${isVisibleLogin ? 'visible' : 'hidden'}`}>
           <div className='background__color'>
@@ -127,11 +123,24 @@ export const LoginForm = () => {
                   <span id='line2'></span>
                 </button>
               </div>
-              <form className='login__form'>
+
+              <form className='login__form' onSubmit={handleLogin}>
                 <p id='action'>Inicio de Sesión</p>
-                <input className='username' placeholder='Escriba su correo o usuario'></input>
-                <input type='password' placeholder='Escriba su contraseña' className='password'></input>
-                <button className='btn'>Iniciar sesión</button>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button type="submit">Iniciar Sesión</button>
               </form>
               <div className='options__account'>
                 <span><a href='#'>¿Olvidaste tu contraseña?</a></span>
@@ -151,33 +160,33 @@ export const LoginForm = () => {
               </div>
               <form className='signup__form' onSubmit={handleSubmit}>
                 <p id='action'>Inicio de Sesión</p>
-                <input 
-                  className='username' 
-                  placeholder='Escriba un usuario' 
-                  value = {username}
+                <input
+                  className='username'
+                  placeholder='Escriba un usuario'
+                  value={username}
                   onChange={(e) => setUsername(e.target.value)} required
                 />
-                <input 
-                  className='email' 
-                  placeholder='Escriba su correo' 
+                <input
+                  className='email'
+                  placeholder='Escriba su correo'
                   type='email'
-                  value = {email}
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)} required
-                  />
-                <input 
-                  type='password' 
-                  placeholder='Escriba su contraseña' 
+                />
+                <input
+                  type='password'
+                  placeholder='Escriba su contraseña'
                   className='password'
-                  value = {password}
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)} required
-                  />
-                <input 
-                  type='password' 
-                  placeholder='Confirme su contraseña' 
+                />
+                <input
+                  type='password'
+                  placeholder='Confirme su contraseña'
                   className='password__confirm'
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)} required
-                  />
+                />
                 <button className='btn'>Registrarme</button>
               </form>
               <div className='options__account'>
