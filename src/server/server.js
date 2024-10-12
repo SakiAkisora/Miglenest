@@ -1,42 +1,44 @@
-const express = require('express');
-const { Client }  = require("pg");
-const cors = require('cors');
-const createAuthRouter = require('./routes/auth');
-const verifyToken = require('./middleware/verifyToken');
+import { PORT } from './config.js'
+import { pool, User } from './user-repository.js'
+import express from 'express'
 
-const app = express();
-const PORT = 4000;
+const app = express()
+app.use(express.json())
 
-const connection = new Client({
-    host: "localhost",
-    database: "miglenest",
-    user: "postgres",
-    password: "root"
-});
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body
+  try {
+    const queryText = await User.login({ username, password })
+    res.send({ queryText })
+  } catch (error) {
+    res.status(401).send({ error: error.message })
+  }
+})
 
-connection.connect(err => {
-    if (err) {
-        console.error('Error al conectar a PostgreSQL:', err);
-        throw err;
-    } else {
-        console.log("Conexión exitosa a PostgreSQL");
-    }
-});
+app.post('/register', async (req, res) => {
+  const { username, email, password } = req.body
+  console.log(req.body)
 
-app.use(cors());
-app.use(express.json());
+  try {
+    const newUser = await User.create({ username, email, password })
+    res.status(201).send({ id: newUser.id_usuario })
+  } catch (error) {
+    res.status(400).send({ error: error.message })
+  }
+})
+app.post('/logout', (req, res) => {})
 
-app.use('/api', createAuthRouter(connection));
+app.post('/protected', (req, res) => {})
 
-// Ejemplo de una ruta protegida
-app.get('/api/protected', verifyToken, (req, res) => {
-    res.json({ message: `Bienvenido, usuario con ID ${req.user.id}` });
-});
-
-app.use((req, res, next) => {
-    res.status(404).send({ message: 'Ruta no encontrada' });
-});
+pool.connect(err => {
+  if (err) {
+    console.error('Error al conectar a la base de datos: ', err)
+    throw err
+  } else {
+    console.log('Conexion exitosa a la base de datos')
+  }
+})
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+  console.log(`Server running on port ${PORT}`)
+})

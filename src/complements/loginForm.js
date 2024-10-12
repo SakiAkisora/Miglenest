@@ -62,33 +62,6 @@ export const LoginForm = () => {
 
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    console.log('Email:', email);
-    console.log('Password:', password);
-
-    try {
-      const response = await fetch('http://localhost:4000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
-      }
-
-      const data = await response.json();
-      console.log('Inicio de sesión exitoso:', data); // Maneja el éxito del inicio de sesión
-    } catch (error) {
-      console.error('Error en la solicitud de inicio de sesión:', error);
-    }
-  };
-
   // Manejo de cambios de entrad
 
   return (
