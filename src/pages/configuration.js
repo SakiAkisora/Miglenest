@@ -1,11 +1,11 @@
-import React from 'react';
-import { AsideConfig } from '../complements/asideConfig';
-import { Routes, Route } from 'react-router-dom';
-import AccountSettings from '../pages/accountSettings';
-import { NotificationsSettings } from './NotificationsSettings';
-import LanguageSettings from '../pages/languageSettings';
-import { PrivacyPolicy } from './privacy';
-import { AdvancedSettings } from './advanced-settings';
+import React from 'react'
+import { AsideConfig } from '../complements/asideConfig.js'
+import { Routes, Route } from 'react-router-dom'
+import AccountSettings from '../pages/accountSettings.js'
+import { NotificationsSettings } from './NotificationsSettings.js'
+import LanguageSettings from '../pages/languageSettings.js'
+import { PrivacyPolicy } from './privacy.js'
+import { AdvancedSettings } from './advanced-settings.js'
 
 export const Configuration = () => {
   return (
@@ -19,7 +19,7 @@ export const Configuration = () => {
           <Route path="advanced" element={<AdvancedSettings />} />
         </Routes>
     </div>
-  );
+  )
 }
 
-export default Configuration;
+export default Configuration

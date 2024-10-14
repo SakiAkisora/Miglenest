@@ -1,69 +1,69 @@
 import React, { useState } from 'react'
-import logo2 from '../assets/image/LetraBlanca.png';
+import logo2 from '../assets/image/LetraBlanca.png'
 import videoMuestra from '../assets/image/VideoMuestra.mp4'
+import { useNavigate } from 'react-router-dom'
 
 export const LoginForm = () => {
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [emailOrUsername, setEmailOrUsername] = useState('');
-
-  const [isVisible, setIsVisible] = useState(true);
-  const [isVisibleLogin, setIsVisibleLogin] = useState(false);
-  const [isVisibleRegister, setIsVisibleRegister] = useState(false);
+  const [isVisible, setIsVisible] = useState(true)
+  const [isVisibleLogin, setIsVisibleLogin] = useState(false)
+  const [isVisibleRegister, setIsVisibleRegister] = useState(false)
 
   const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
+    setIsVisible(!isVisible)
+  }
 
   const toggleLogin = () => {
-    setIsVisibleLogin(!isVisibleLogin);
-  };
+    setIsVisibleLogin(!isVisibleLogin)
+  }
   const toggleRegister = () => {
-    setIsVisibleRegister(!isVisibleRegister);
-  };
+    setIsVisibleRegister(!isVisibleRegister)
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleRegister = async () => {
+    const response = await fetch('http://localhost:4000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password
+      })
+    })
 
-    if (password !== passwordConfirm) {
-      alert('Las contraseñas no coinciden');
-      return;
+    const data = await response.json()
+    console.log(data)
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const response = await fetch('http://localhost:4000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    })
+    const data = await response.json()
+    console.log(data)
+
+    if (response.ok) {
+      navigate('/home')
+    } else {
+      console.error('Error al iniciar sesión:', data.error)
     }
-
-    try {
-      const response = await fetch('http://localhost:4000/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          passwordConfirm,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert('Registro exitoso');
-        // Limpiar campos o redirigir a otra página
-      } else {
-        alert(`Error: ${data.message}`);
-      }
-    } catch (error) {
-      console.error('Error al enviar datos', error);
-      alert('Error al registrar usuario');
-    }
-
-  };
+  }
 
   // Manejo de cambios de entrad
-
   return (
     <div>
       <div className='main__background'>
@@ -80,9 +80,9 @@ export const LoginForm = () => {
         <div className={`select__account__options ${isVisible ? 'visible' : 'hidden'}`}>
           <span id='starting'>Empecemos por lo basico...</span>
           <span id='question'>¿Ya tienes cuenta?</span>
-          <button onClick={() => { toggleVisibility(); toggleLogin(); }} className='btnLogin'>Iniciar sesión</button>
+          <button onClick={() => { toggleVisibility(); toggleLogin() }} className='btnLogin'>Iniciar sesión</button>
           <span id='question'>Crear una cuenta</span>
-          <button onClick={() => { toggleVisibility(); toggleRegister(); }} className='btnRegister'>Registrarme</button>
+          <button onClick={() => { toggleVisibility(); toggleRegister() }} className='btnRegister'>Registrarme</button>
           <div className='options__account'>
             <span><a href='/home'>Volver a inicio</a></span>
           </div>
@@ -91,26 +91,26 @@ export const LoginForm = () => {
           <div className='background__color'>
             <div className='square__login'>
               <div className='miglenest__mini-logo'>
-                <button onClick={() => { toggleVisibility(); toggleLogin(); }} className='back'>
+                <button onClick={() => { toggleVisibility(); toggleLogin() }} className='back'>
                   <span id='line1'></span>
                   <span id='line2'></span>
                 </button>
               </div>
 
-              <form className='login__form' onSubmit={handleLogin}>
+              <form className='login__form' onSubmit={ handleLogin }>
                 <p id='action'>Inicio de Sesión</p>
                 <input
                   type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="email"
+                  value={ email }
+                  onChange={(e) => setEmail(e.target.value)} // Actualiza el estado
                   required
                 />
                 <input
                   type="password"
                   placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={ password }
+                  onChange={(e) => setPassword(e.target.value)} // Actualiza el estado
                   required
                 />
                 <button type="submit">Iniciar Sesión</button>
@@ -126,39 +126,38 @@ export const LoginForm = () => {
           <div className='background__color'>
             <div className='square__login'>
               <div className='miglenest__mini-logo'>
-                <button onClick={() => { toggleVisibility(); toggleRegister(); }} className='back2'>
+                <button onClick={() => { toggleVisibility(); toggleRegister() }} className='back2'>
                   <span id='line1'></span>
                   <span id='line2'></span>
                 </button>
               </div>
-              <form className='signup__form' onSubmit={handleSubmit}>
+              <form className='signup__form' onSubmit={ handleRegister }>
                 <p id='action'>Inicio de Sesión</p>
                 <input
+                  id = "username"
                   className='username'
                   placeholder='Escriba un usuario'
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)} required
+                  value={ username }
+                  onChange={(e) => setUsername(e.target.value)} // Actualiza el estado
+                  required
                 />
                 <input
+                  id = "email"
                   className='email'
                   placeholder='Escriba su correo'
                   type='email'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)} required
+                  value={ email }
+                  onChange={(e) => setEmail(e.target.value)} // Actualiza el estado
+                  required
                 />
                 <input
+                  id = 'password'
                   type='password'
                   placeholder='Escriba su contraseña'
                   className='password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} required
-                />
-                <input
-                  type='password'
-                  placeholder='Confirme su contraseña'
-                  className='password__confirm'
-                  value={passwordConfirm}
-                  onChange={(e) => setPasswordConfirm(e.target.value)} required
+                  value={ password }
+                  onChange={(e) => setPassword(e.target.value)} // Actualiza el estado
+                  required
                 />
                 <button className='btn'>Registrarme</button>
               </form>

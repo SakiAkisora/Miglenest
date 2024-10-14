@@ -1,10 +1,10 @@
 import React from 'react'
-import { AsideInfo } from '../complements/asideInfo'
-import { AboutUs } from './AboutUs';
-import { PrivacyPolicy } from './privacy';
-import { ServiceTerms } from './ServiceTerms';
-import { CommunityGuidelines } from './CommunityGuidelines';
-import { Routes, Route } from 'react-router-dom';
+import { AsideInfo } from '../complements/asideInfo.js'
+import { AboutUs } from './AboutUs.js'
+import { PrivacyPolicy } from './privacy.js'
+import { ServiceTerms } from './ServiceTerms.js'
+import { CommunityGuidelines } from './CommunityGuidelines.js'
+import { Routes, Route } from 'react-router-dom'
 
 export const Information = () => {
   return (

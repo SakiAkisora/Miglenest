@@ -14,4 +14,4 @@ export const VideoSaved = () => {
     </div>
   )
 }
-export default VideoSaved;
+export default VideoSaved

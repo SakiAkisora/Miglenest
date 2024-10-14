@@ -13,4 +13,4 @@ export const VideosLiked = () => {
     </div>
   )
 }
-export default VideosLiked;
+export default VideosLiked

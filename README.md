@@ -71,6 +71,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 Dependencies
 
-npm install jsonwebtoken bcryptjs
+npm install jsonwebtoken 
+npm install bcryptjs
+npm install cookie-parser
 npm install express-session
 

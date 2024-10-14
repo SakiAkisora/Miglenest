@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const AsideRight = () => { 
+export const AsideRight = () => {
   return (
     <div>
         <div className='absolute top-[10.6%] right-0 border-[2px] border-gray-300 h-[89.4vh] w-1/4 p-[1%]'>

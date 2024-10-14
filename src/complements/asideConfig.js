@@ -1,13 +1,13 @@
-import React, {useState} from 'react'
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const AsideConfig = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const HandleNavigate = (path) => {
-    navigate(path);
+    navigate(path)
   }
-  
+
   return (
     <div>
         <div className='fixed top-[10.6%] h-[87.8vh] left-[5%] w-1/4 z-0 flex flex-col border-r-2 border-gray-300'>
@@ -23,4 +23,4 @@ export const AsideConfig = () => {
     </div>
   )
 }
-export default AsideConfig;
+export default AsideConfig

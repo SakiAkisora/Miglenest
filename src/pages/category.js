@@ -1,5 +1,5 @@
 import React from 'react'
-import lupa from '../assets/image/search.png';
+import lupa from '../assets/image/search.png'
 
 export const Category = () => {
   return (
@@ -20,4 +20,4 @@ export const Category = () => {
     </div>
   )
 }
-export default Category;  
+export default Category

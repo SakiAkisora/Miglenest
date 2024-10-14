@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { HeaderMain } from './complements/header';
-import { AsideMenu } from './complements/AsideMenu';
-import Home from './pages/home';
-import Category from './pages/category';
-import Login from './pages/Login';
-import VideosSaved from './pages/VideoSaved';
-import VideosLiked from './pages/VideosLiked';
-import { Configuration } from './pages/configuration';
-import './App.css';
-import { Information } from './pages/information';
+import React, { useState } from 'react'
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { HeaderMain } from './complements/header.js'
+import { AsideMenu } from './complements/AsideMenu.js'
+import Home from './pages/home.js'
+import Category from './pages/category.js'
+import Login from './pages/Login.js'
+import VideosSaved from './pages/VideoSaved.js'
+import VideosLiked from './pages/VideosLiked.js'
+import { Configuration } from './pages/configuration.js'
+import './App.css'
+import { Information } from './pages/information.js'
 
-
-function AnimatedRoutes() {
-  const location = useLocation();
+function AnimatedRoutes () {
+  const location = useLocation()
 
   return (
     <TransitionGroup>
@@ -29,15 +28,15 @@ function AnimatedRoutes() {
         </Routes>
       </CSSTransition>
     </TransitionGroup>
-  );
+  )
 }
 
-function Layout() {
-  const [isMenuActive, setIsMenuActive] = useState(true);
+function Layout () {
+  const [isMenuActive, setIsMenuActive] = useState(true)
 
   const toggleMenu = () => {
-    setIsMenuActive(!isMenuActive);
-  };
+    setIsMenuActive(!isMenuActive)
+  }
 
   return (
     <>
@@ -45,10 +44,10 @@ function Layout() {
       <AsideMenu isMenuActive={isMenuActive} setIsMenuActive={setIsMenuActive} />
       <AnimatedRoutes />
     </>
-  );
+  )
 }
 
-function App() {
+function App () {
   return (
     <div>
       <Routes>
@@ -56,15 +55,15 @@ function App() {
         <Route path="/login" element={<Login />} />
       </Routes>
     </div>
-  );
+  )
 }
 
-function AppWrapper() {
+function AppWrapper () {
   return (
     <Router>
       <App />
     </Router>
-  );
+  )
 }
 
-export default AppWrapper;
+export default AppWrapper

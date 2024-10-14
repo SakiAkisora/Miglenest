@@ -52,25 +52,37 @@ export class User {
     return result.rows[0]
   }
 
-  static async login ({ username, password }) {
-    Validation.username(username)
+  static async login ({ email, password }) {
+    Validation.email(email)
     Validation.password(password)
     const client = await pool.connect()
-    const queryText = 'SELECT * FROM public.usuario WHERE username = $1'
-    const result = await client.query(queryText, [username])
+    const queryText = 'SELECT * FROM public.usuario WHERE email = $1'
+    const result = await client.query(queryText, [email])
     // Verificar si el usuario no existe
     const user = result.rows[0]
 
     if (result.rows.length === 0) {
       throw new Error('The user does not exist')
     }
-    const isValid = bcrypt.compare(password, user.password)
+    const isValid = await bcrypt.compare(password, user.password)
+    if (!isValid) throw new Error('Invalid password')
 
-    if (!isValid) {
-      throw new Error('Invalid password')
+    // const { password: _, ...publicUser } = user
+    const joinDate = new Date(user.fecha_creacion)
+    const formattedDate = joinDate.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+
+    return {
+
+      username: user.username,
+      profile_img: user.profile_img,
+      desc: user.descripcion,
+      join_date: formattedDate
+
     }
-
-    return user
   }
 }
 

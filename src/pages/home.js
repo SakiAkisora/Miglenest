@@ -1,6 +1,6 @@
 import React from 'react'
-import { AsideRight } from '../complements/AsideRight';
-import { ErrorPost } from '../complements/errorPost';
+import { AsideRight } from '../complements/AsideRight.js'
+import { ErrorPost } from '../complements/errorPost.js'
 
 export const Home = () => {
   return (
@@ -10,4 +10,4 @@ export const Home = () => {
     </div>
   )
 }
-export default Home;
+export default Home
