@@ -75,4 +75,4 @@ npm install jsonwebtoken
 npm install bcryptjs
 npm install cookie-parser
 npm install express-session
-
+npm install standard -D

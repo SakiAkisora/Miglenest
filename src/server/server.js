@@ -44,8 +44,8 @@ app.post('/login', async (req, res) => {
     res
       .cookie('access_token', token, {
         httpOnly: true, // La cookie solo se puede acceder en el servidor
-        secure: process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https
-        sameSite: 'none', // La cookie solo se puede acceder en el mismo dominio
+        secure:  process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https
+        sameSite: 'Lax', // La cookie solo se puede acceder en el mismo dominio
         maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de 1 hora
       })
       .send({ user, token })
@@ -71,16 +71,32 @@ app.post('/logout', (req, res) => {
     .json({ message: 'Logout successful ' })
 })
 
+app.get('/check-session', (req, res) => {
+  const token = req.cookies.access_token;
+  if (token) {
+    try {
+      const data = jwt.verify(token, SECRET_JWT_KEY)
+      return res.status(200).json({ loggedIn: true, user: data })
+    } catch (error) {
+      console.error('Error verifying token:', error)
+      return res.status(401).json({ loggedIn: false })
+    }
+  } else {
+    return res.status(401).json({ loggedIn: false })
+  }
+})
+
 app.post('/protected', (req, res) => {
   const token = req.cookies.access_token
   if (!token) {
-    return res.status(403).send('Access not authorize')
+    return res.status(403).send('Access not authorized')
   }
 
   try {
     const data = jwt.verify(token, SECRET_JWT_KEY)
-    res.render('protected', data)
+    res.render('protected', { user: data })
   } catch (error) {
+    console.error('Token verification failed:', error)
     res.status(401).send('Access not authorized')
   }
 })

@@ -14,7 +14,6 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
     navigate('/login') // Navegar a la página de login
   }
 
-  // Función para manejar el cierre de sesión
   const handleLogout = async () => {
     try {
       // Hacemos una solicitud al servidor para eliminar la cookie de sesión
@@ -28,9 +27,28 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
       console.error('Error during logout:', error)
     }
   }
+  // Función para manejar el cierre de sesión
+  const checkSession = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/check-session', {
+        credentials: 'include' // Incluir las cookies en la solicitud
+      })
+      const data = await response.json()
+      if (data.loggedIn) {
+        setIsAuthenticated(true) // Actualizamos el estado si la sesión está activa
+      } else {
+        setIsAuthenticated(false) // Si no, indicamos que no está autenticado
+      }
+    } catch (error) {
+      console.error('Error checking session: ', error)
+      setIsAuthenticated(false) // En caso de error, lo consideramos no autenticado
+    }
+  }
 
   // Verificamos si el usuario está autenticado cuando se monta el componente
   useEffect(() => {
+    checkSession() // Verificamos la sesión cuando el componente se monta
+
     const checkAuth = async () => {
       try {
         const response = await fetch('http://localhost:4000/protected', {
