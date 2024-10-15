@@ -43,7 +43,6 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
         if (response.ok) {
           // eslint-disable-next-line no-unused-vars
           const data = await response.json()
-          console.log('Authenticated:', data)
           setIsAuthenticated(true) // Si el usuario está autenticado, cambiamos el estado
         } else {
           setIsAuthenticated(false) // Si no está autenticado, cambiamos el estado

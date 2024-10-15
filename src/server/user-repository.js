@@ -35,7 +35,6 @@ export class User {
         RETURNING id_usuario;
       `
       const insertResult = await client.query(insertQuery, [username, email, hashedPassword])
-      console.log('Usuario creado exitosamente con ID:', insertResult.rows[0].id_usuario)
       // Retornar el nuevo usuario creado
       return insertResult.rows[0]
     } catch (error) {

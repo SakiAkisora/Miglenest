@@ -57,7 +57,6 @@ app.post('/login', async (req, res) => {
 
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body
-  console.log(req.body)
 
   try {
     const newUser = await User.create({ username, email, password })
@@ -89,7 +88,6 @@ app.post('/logout', (req, res) => {
 
 app.post('/protected', async (req, res) => {
   const token = req.cookies.access_token
-  console.log('Token en /protected:', token)
   if (!token) {
     return res.status(403).send('Acceso denegado para crear la cookie')
   }
