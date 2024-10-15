@@ -62,7 +62,7 @@ export class User {
 
     return {
       username: user.username,
-      profile_img: user.profile_img,
+      profile_img: `http://localhost:4000/uploads/profiles/${user.profile_img}`,
       desc: user.desc,
       join_date: formattedDate // Retorna la fecha formateada
     }

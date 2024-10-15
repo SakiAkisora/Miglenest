@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { HeaderMain } from './complements/header.js'
 import { AsideMenu } from './complements/AsideMenu.js'
@@ -20,6 +20,7 @@ function AnimatedRoutes () {
     <TransitionGroup>
       <CSSTransition key={location.key} classNames="fade" timeout={0}>
         <Routes location={location}>
+          <Route path="/" element = { <Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
           <Route path="/category" element={<Category />} />
           <Route path="/saved" element={<VideosSaved />} />

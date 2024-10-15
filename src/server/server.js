@@ -4,12 +4,15 @@ import { pool, User } from './user-repository.js'
 import express from 'express'
 import cors from 'cors'
 import jwt from 'jsonwebtoken'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const corsOptions = {
   origin: 'http://localhost:3000', // Especifica el origen permitido
   credentials: true // Habilita el envío de cookies
 }
-
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
@@ -124,3 +127,5 @@ pool.connect(err => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
