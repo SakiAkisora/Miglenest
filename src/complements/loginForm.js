@@ -48,6 +48,7 @@ export const LoginForm = () => {
       headers: {
         'Content-Type': 'application/json'
       },
+      credentials: 'include', // Incluye las credenciales
       body: JSON.stringify({
         email: email,
         password: password
@@ -55,7 +56,6 @@ export const LoginForm = () => {
     })
     const data = await response.json()
     console.log(data)
-
     if (response.ok) {
       navigate('/home')
     } else {

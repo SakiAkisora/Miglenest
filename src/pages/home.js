@@ -5,8 +5,8 @@ import { ErrorPost } from '../complements/errorPost.js'
 export const Home = () => {
   return (
     <div className='HomePage'>
-        <ErrorPost/>
         <AsideRight/>
+        <ErrorPost/>
     </div>
   )
 }

@@ -1,34 +1,41 @@
-import React, { useState, useEffect } from 'react'
-import { AsideRight } from '../complements/AsideRight'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { AsideRight } from '../complements/AsideRight.js'
 
 export const Profile = () => {
-  const [userName, setUsername] = useState('')
-  const [loading, setLoading] = useState(true)
-  const token = localStorage.getItem('token') // Obtén el token de autenticación del almacenamiento local
-  console.log(token) // Check if the token is valid
+  const [username, setUsername] = useState('')
+  const [date, setDate] = useState('')
+
   useEffect(() => {
-    axios.get('http://localhost:4000/api/user', {
-      headers: {
-        Authorization: `Bearer ${token}` // Agrega el token de autenticación al encabezado
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/protected', {
+          method: 'POST',
+          credentials: 'include' // Esto permite incluir cookies en la solicitud
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Datos del usuario:', data) // Log para verificar que los datos se reciben correctamente
+          setUsername(data.user.username)
+          setDate(data.user.join_date) // Asegúrate de usar "join_date" aquí
+        } else {
+          console.error('Error al obtener la información del usuario:', response.statusText)
+        }
+      } catch (error) {
+        console.error('Error al hacer la solicitud:', error)
       }
-    }).then(response => { setUsername(response.data.name);
-      setLoading(false);
-    })
-    .catch(error => {
-      console.error(error);
-      setLoading(false);
-    });
-  }, []);
+    }
+
+    fetchUserInfo()
+  }, [])
 
   return (
     <div>
-      <AsideRight/>
-      {loading ? (
-        <h2 className='absolute text-xl top-[20%] left-[20%]'>Cargando...</h2>
-      ) : (
-        <h2 className='absolute text-xl top-[20%] left-[20%]'>Bienvenido, {userName}</h2>
-      )}
+      <AsideRight />
+      <div className='absolute text-xl top-[20%] left-[20%]'>
+        <h1>Bienvenido, { username }</h1>
+        <h1>Fecha de unión: {date || 'Fecha no disponible'}</h1>
+      </div>
     </div>
   )
 }

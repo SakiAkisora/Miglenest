@@ -11,6 +11,7 @@ import VideosLiked from './pages/VideosLiked.js'
 import { Configuration } from './pages/configuration.js'
 import './App.css'
 import { Information } from './pages/information.js'
+import { Profile } from './pages/profile.js'
 
 function AnimatedRoutes () {
   const location = useLocation()
@@ -25,6 +26,7 @@ function AnimatedRoutes () {
           <Route path="/likes" element={<VideosLiked />} />
           <Route path="/settings/*" element={<Configuration />} />
           <Route path="/information/*" element={<Information />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>
@@ -40,8 +42,8 @@ function Layout () {
 
   return (
     <>
-      <HeaderMain isActive={isMenuActive} toggleMenu={toggleMenu} />
       <AsideMenu isMenuActive={isMenuActive} setIsMenuActive={setIsMenuActive} />
+      <HeaderMain isActive={isMenuActive} toggleMenu={toggleMenu} />
       <AnimatedRoutes />
     </>
   )

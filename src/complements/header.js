@@ -1,13 +1,16 @@
 /* eslint-disable multiline-ternary */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/image/Icon2.png'
 import lupa from '../assets/image/search.png'
 import menu from '../assets/image/menu.png'
+import profileIcon from '../assets/image/profileIcon.png'
 
 export const HeaderMain = ({ isActive, toggleMenu }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isMenuActive, setIsMenuActive] = useState(false)
   const navigate = useNavigate()
+  const menuRef = useRef(null)
 
   // Función para manejar el clic de login
   const handleLoginClick = () => {
@@ -22,32 +25,14 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
         credentials: 'include' // Incluimos las cookies
       })
       setIsAuthenticated(false) // Actualizamos el estado de autenticación
-      navigate('/') // Redirigimos al usuario después del logout
+      navigate('/login') // Redirigimos al usuario después del logout
     } catch (error) {
       console.error('Error during logout:', error)
     }
   }
-  // Función para manejar el cierre de sesión
-  const checkSession = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/check-session', {
-        credentials: 'include' // Incluir las cookies en la solicitud
-      })
-      const data = await response.json()
-      if (data.loggedIn) {
-        setIsAuthenticated(true) // Actualizamos el estado si la sesión está activa
-      } else {
-        setIsAuthenticated(false) // Si no, indicamos que no está autenticado
-      }
-    } catch (error) {
-      console.error('Error checking session: ', error)
-      setIsAuthenticated(false) // En caso de error, lo consideramos no autenticado
-    }
-  }
-
   // Verificamos si el usuario está autenticado cuando se monta el componente
   useEffect(() => {
-    checkSession() // Verificamos la sesión cuando el componente se monta
+    // checkSession() // Verificamos la sesión cuando el componente se monta
 
     const checkAuth = async () => {
       try {
@@ -68,13 +53,29 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
         setIsAuthenticated(false) // Si hay un error, no está autenticado
       }
     }
-
     checkAuth()
   }, [])
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuActive(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuRef])
+
+  const handleProfileClick = () => {
+    setIsMenuActive(!isMenuActive)
+  }
+
   return (
     <div>
-      <div className="fixed bg-[#6312aa] w-full flex items-center p-[0px_10px_10px_10px], top-0">
+      <div className="absolute bg-[#6312aa] w-full flex items-center p-[0px_10px_10px_10px], top-0">
         <button className="relative w-[55px] h-[50px] transform ml-[10px] mr-[25px] mt-[-20px] cursor-pointer mb-[-20px] border-none" onClick={toggleMenu}>
           <img className='invert' src={menu}></img>
         </button>
@@ -96,17 +97,25 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
         </div>
 
         <div className="sesion">
-          <div className="mt-[10px] h-[30px] p-[2px_10px] text-[#6312aa] bg-white">
+          <div className="mt-[10px] h-[30px] p-[2px_10px] text-[#6312aa]">
             <div>
-              {isAuthenticated ? (
-                <button onClick={handleLogout} className="text-white bg-red-500 p-2 rounded">
-                  Cerrar sesión
-                </button>
-              ) : (
-                <button onClick={handleLoginClick} className="text-[#6312aa] bg-white p-2 rounded">
-                  Acceder
-                </button>
+            {isAuthenticated ? (
+            <div className="absolute z-10">
+              <button onClick={handleProfileClick} className="mt-[-50px] h-[30px] p-[2px_10px]">
+                <img className='invert w-[45px] h-[45px]' src={profileIcon} alt="Perfil" />
+              </button>
+              {isMenuActive && (
+                <div ref={menuRef} className='absolute text-black bg-gray-300 mt-[10px] ml-[-140px] text-xl rounded-lg'>
+                  <button onClick={() => navigate('/profile')} className="text-left p-[10px] pb-3 hover:bg-white rounded-lg w-full">Perfil</button>
+                  <button onClick={handleLogout} className="p-[10px] hover:bg-white rounded-lg">Cerrar sesión</button>
+                </div>
               )}
+            </div>
+            ) : (
+            <div className="mt-[10px] h-[30px] p-[2px_10px] text-[#6312aa] bg-white">
+              <button onClick={handleLoginClick} className="btnAcceder">Acceder</button>
+            </div>
+            )}
             </div>
           </div>
         </div>

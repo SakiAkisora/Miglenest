@@ -36,19 +36,20 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.login({ email, password })
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id_usuario, username: user.username },
       SECRET_JWT_KEY,
       {
         expiresIn: '1h'
-      })
+      }
+    )
     res
       .cookie('access_token', token, {
         httpOnly: true, // La cookie solo se puede acceder en el servidor
-        secure:  process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https
-        sameSite: 'Lax', // La cookie solo se puede acceder en el mismo dominio
+        secure: process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https
+        sameSite: 'lax', // La cookie solo se puede acceder en el mismo dominio
         maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de 1 hora
       })
-      .send({ user, token })
+      .send({ user })
   } catch (error) {
     res.status(401).send({ error: error.message })
   }
@@ -71,8 +72,8 @@ app.post('/logout', (req, res) => {
     .json({ message: 'Logout successful ' })
 })
 
-app.get('/check-session', (req, res) => {
-  const token = req.cookies.access_token;
+/* app.get('/check-session', (req, res) => {
+  const token = req.cookies.access_token
   if (token) {
     try {
       const data = jwt.verify(token, SECRET_JWT_KEY)
@@ -84,17 +85,29 @@ app.get('/check-session', (req, res) => {
   } else {
     return res.status(401).json({ loggedIn: false })
   }
-})
+}) */
 
-app.post('/protected', (req, res) => {
+app.post('/protected', async (req, res) => {
   const token = req.cookies.access_token
+  console.log('Token en /protected:', token)
   if (!token) {
-    return res.status(403).send('Access not authorized')
+    return res.status(403).send('Acceso denegado para crear la cookie')
   }
 
   try {
     const data = jwt.verify(token, SECRET_JWT_KEY)
-    res.render('protected', { user: data })
+
+    const user = await User.findOne({ username: data.username })
+
+    // eslint-disable-next-line object-curly-newline
+    res.json({ user:
+    {
+      username: user.username,
+      profile_img: user.profile_img,
+      desc: user.desc,
+      join_date: user.join_date
+    }
+    })
   } catch (error) {
     console.error('Token verification failed:', error)
     res.status(401).send('Access not authorized')

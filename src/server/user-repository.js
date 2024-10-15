@@ -47,9 +47,26 @@ export class User {
   }
 
   static async findOne ({ username }) {
-    const queryText = 'SELECT * FROM public.usuario WHERE username = $1'
+    const queryText = 'SELECT username, profile_img, descripcion AS desc, fecha_creacion FROM public.usuario WHERE username = $1'
     const result = await pool.query(queryText, [username])
-    return result.rows[0]
+
+    if (result.rows.length === 0) return null // Si no se encuentra el usuario
+
+    const user = result.rows[0]
+
+    // Formatea la fecha de creación a 'DD/MM/YYYY'
+    const formattedDate = new Date(user.fecha_creacion).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+
+    return {
+      username: user.username,
+      profile_img: user.profile_img,
+      desc: user.desc,
+      join_date: formattedDate // Retorna la fecha formateada
+    }
   }
 
   static async login ({ email, password }) {
