@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import pkg from 'pg' // Importa el paquete pg
 import { SALT_ROUNDS } from './config.js'
+import { type } from '@testing-library/user-event/dist/type/index.js'
 const { Pool } = pkg // Desestructura Pool desde el paquete
 
 // Configura el pool de conexiones
@@ -21,7 +22,7 @@ export class User {
     const client = await pool.connect()
     try {
       // Verificar si ya existe el usuario
-      const queryText = 'SELECT * FROM public.usuario WHERE username = $1 OR email = $2'
+      const queryText = 'SELECT * FROM public.normalUser WHERE username = $1 OR email = $2'
       const result = await client.query(queryText, [username, email])
       if (result.rows.length > 0) {
         throw new Error('Username or email already exists')
@@ -30,15 +31,15 @@ export class User {
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
       // Insertar el nuevo usuario en la base de datos
       const insertQuery = `
-        INSERT INTO public.usuario (username, email, password, fecha_creacion, profile_img, descripcion)
-        VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'default.png', '')
-        RETURNING id_usuario;
+        INSERT INTO public.normalUser (username, email, password, creation_date, profile_img, background, description)
+        VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'default.png', 'defaultBackground.png',  '')
+        RETURNING id_user;
       `
       const insertResult = await client.query(insertQuery, [username, email, hashedPassword])
       // Retornar el nuevo usuario creado
       return insertResult.rows[0]
     } catch (error) {
-      console.error('Error creando usuario', error)
+      console.error('Error creando normalUser', error)
       throw error
     } finally {
       client.release() // Asegúrate de liberar el cliente
@@ -46,7 +47,7 @@ export class User {
   }
 
   static async findOne ({ username }) {
-    const queryText = 'SELECT username, profile_img, descripcion AS desc, fecha_creacion FROM public.usuario WHERE username = $1'
+    const queryText = 'SELECT username, profile_img, background, description AS desc, creation_date FROM public.normalUser WHERE username = $1'
     const result = await pool.query(queryText, [username])
 
     if (result.rows.length === 0) return null // Si no se encuentra el usuario
@@ -54,7 +55,7 @@ export class User {
     const user = result.rows[0]
 
     // Formatea la fecha de creación a 'DD/MM/YYYY'
-    const formattedDate = new Date(user.fecha_creacion).toLocaleDateString('es-ES', {
+    const formattedDate = new Date(user.creation_date).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
@@ -72,7 +73,7 @@ export class User {
     Validation.email(email)
     Validation.password(password)
     const client = await pool.connect()
-    const queryText = 'SELECT * FROM public.usuario WHERE email = $1'
+    const queryText = 'SELECT * FROM public.normalUser WHERE email = $1'
     const result = await client.query(queryText, [email])
     // Verificar si el usuario no existe
     const user = result.rows[0]
@@ -84,7 +85,7 @@ export class User {
     if (!isValid) throw new Error('Invalid password')
 
     // const { password: _, ...publicUser } = user
-    const joinDate = new Date(user.fecha_creacion)
+    const joinDate = new Date(user.creation_date)
     const formattedDate = joinDate.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
@@ -95,13 +96,23 @@ export class User {
 
       username: user.username,
       profile_img: user.profile_img,
-      desc: user.descripcion,
+      background: user.background,
+      desc: user.description,
       join_date: formattedDate
 
     }
   }
+  static async createPost({ title, description, file, typefile, id_category, id_user }) {
+    const queryText = `
+      INSERT INTO post (title, description, creation_date, id_category, id_user, file, typefile)
+      VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    const result = await pool.query(queryText, [title, description, id_category, id_user, file, typefile]);
+  
+    return result.rows[0];
+  }
 }
-
 class Validation {
   static username (username) {
     if (typeof username !== 'string') throw new Error('Username must be a string')
@@ -117,4 +128,15 @@ class Validation {
     if (typeof password !== 'string') throw new Error('Password must be a string')
     if (password.length < 4) throw new Error('Password must be at least 4 characters long')
   }
+  static postTitle (postTitle) {
+    if(typeof postTitle !== 'string') throw new Error('Title must be a string')
+    if(title.length < 4 ) throw new Error('Title must be at least 4 characters long')
+    if(title.length > 30 ) throw new Error('Title not must be more than 30 characters long')
+  }
+  static postDescription (postDescription) {
+    if(typeof postDescription !== 'string') throw new Error('Description must be a string')
+    if(title.length < 4 ) throw new Error('Description must be at least 4 characters long')
+    if(title.length > 30 ) throw new Error('Description not must be more than 30 characters long')
+  }
 }
+

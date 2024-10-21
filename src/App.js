@@ -12,6 +12,7 @@ import { Configuration } from './pages/configuration.js'
 import './App.css'
 import { Information } from './pages/information.js'
 import { Profile } from './pages/profile.js'
+import { CreatePost } from './pages/CreatePost.js'
 
 function AnimatedRoutes () {
   const location = useLocation()
@@ -28,6 +29,7 @@ function AnimatedRoutes () {
           <Route path="/settings/*" element={<Configuration />} />
           <Route path="/information/*" element={<Information />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path ="/create" element={<CreatePost />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>

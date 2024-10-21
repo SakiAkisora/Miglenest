@@ -39,7 +39,7 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.login({ email, password })
     const token = jwt.sign(
-      { id: user.id_usuario, username: user.username },
+      { id: user.id_user, username: user.username },
       SECRET_JWT_KEY,
       {
         expiresIn: '1h'
@@ -63,7 +63,7 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.create({ username, email, password })
-    res.status(201).send({ id: newUser.id_usuario })
+    res.status(201).send({ id: newUser.id_user })
   } catch (error) {
     res.status(400).send({ error: error.message })
   }
@@ -74,20 +74,24 @@ app.post('/logout', (req, res) => {
     .json({ message: 'Logout successful ' })
 })
 
-/* app.get('/check-session', (req, res) => {
-  const token = req.cookies.access_token
-  if (token) {
-    try {
-      const data = jwt.verify(token, SECRET_JWT_KEY)
-      return res.status(200).json({ loggedIn: true, user: data })
-    } catch (error) {
-      console.error('Error verifying token:', error)
-      return res.status(401).json({ loggedIn: false })
-    }
-  } else {
-    return res.status(401).json({ loggedIn: false })
+app.post('/createPost', async (req, res) => {
+  const { title, description, id_category, id_user, file, typefile } = req.body
+
+  try{
+    const newPost = await User.createPost( 
+      {
+        title,
+        description,
+        id_category,
+        id_user,
+        file,
+        typefile
+      })
+      res.status(201).send({ id: newPost.id_post })
+  } catch (error) {
+    res.status(400).send({ error: error.message })
   }
-}) */
+})
 
 app.post('/protected', async (req, res) => {
   const token = req.cookies.access_token
@@ -129,3 +133,19 @@ app.listen(PORT, () => {
 })
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+
+app.post('/getUserId', async (req, res) => {
+  const token = req.cookies.access_token;
+  if (!token) {
+    return res.status(401).json({ error: 'Usuario no autenticado' });
+  }
+
+  try {
+    const data = jwt.verify(token, SECRET_JWT_KEY);
+    const userId = data.id_user; // Asegúrate de que esta propiedad contenga el ID del usuario
+    res.json({ id_user: userId }); // Envía el ID del usuario en la respuesta
+  } catch (error) {
+    console.error('Error en la verificación del token:', error);
+    res.status(401).json({ error: 'Access not authorized' });
+  }
+});

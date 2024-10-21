@@ -16,6 +16,9 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
   const handleLoginClick = () => {
     navigate('/login') // Navegar a la página de login
   }
+  const handleCreateContent = () => {
+    navigate('/create')
+  }
 
   const handleLogout = async () => {
     try {
@@ -100,6 +103,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
             <div>
             {isAuthenticated ? (
             <div className="absolute z-10">
+              <button onClick = {handleCreateContent} className="ml-[-70px] mr-[30px] mt-[-5px] h-[30px] p-[2px_10px] text-[#6312aa] bg-white">Crear</button>
               <button onClick={handleProfileClick} className="mt-[-30px] h-[30px] p-[2px_10px]">
                 <img className='invert w-[45px] h-[45px]' src={profileIcon} alt="Perfil" />
               </button>
