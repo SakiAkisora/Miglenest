@@ -1,50 +1,67 @@
-
-create database miglenest;
-
+--Data Base: miglenest
+CREATE DATABASE miglenest;
 \c miglenest
 
-create table usuario(
-    id_usuario serial primary key ,
-    username varchar(50) unique not null,
-    email varchar(255) unique not null,
-    password varchar(255) not null,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    profile_img text default 'default.png',
-    descripcion varchar (300)
+
+
+-- Table: administrator
+CREATE TABLE administrator (
+    id_administrator SERIAL PRIMARY KEY,
+    id_user INT NOT NULL REFERENCES normalUser(id_user) ON UPDATE CASCADE
 );
 
-create table categoria(
-    id_categoria int primary key ,
-    nombre_categoria varchar(50)
+-- Table: user
+CREATE TABLE normalUser (
+    id_user SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    creation_date TIMESTAMP,
+    profile_img TEXT DEFAULT 'default.png',
+    background TEXT DEFAULT 'default.png',
+    description VARCHAR(300)
 );
 
-create table post(
-    id_post int primary key,
-    titulo varchar(100) not null,
-    descripcion varchar(100),
-    fecha_creacion TIMESTAMP default CURRENT_TIMESTAMP,
-    id_usuario int, foreign key (id_usuario) references usuario(id_usuario),
-    id_categoria int, foreign key (id_categoria) references categoria(id_categoria)
+-- Table: follower
+CREATE TABLE follower (
+    follower INT REFERENCES normalUser(id_user),
+    followed INT REFERENCES normalUser(id_user),
+    creation_date TIMESTAMP,
+    PRIMARY KEY (follower, followed)
 );
 
-CREATE TABLE likes (
-    id_like SERIAL PRIMARY KEY ,
-    user_id INT, foreign key (user_id) references usuario(id_usuario),
-    post_id INT, foreign key (post_id) references post(id_post),
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Table: post
+CREATE TABLE post (
+    id_post SERIAL PRIMARY KEY,
+    title VARCHAR(100),
+    description VARCHAR(300),
+    creation_date TIMESTAMP,
+    id_category INT REFERENCES category(id_category),
+    id_user INT REFERENCES normalUser(id_user)
+
 );
 
-CREATE TABLE comentarios (
-    id_comentarios SERIAL PRIMARY KEY ,
-    contenido TEXT,
-    user_id INT, foreign key (user_id) references usuario(id_usuario),
-    post_id INT, foreign key (post_id) references post(id_post),
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Table: "like"
+CREATE TABLE "like" (
+    id_user INT REFERENCES normalUser(id_user),
+    id_post INT REFERENCES post(id_post),
+    creation_date TIMESTAMP,
+    PRIMARY KEY (id_user, id_post)
+
 );
 
-CREATE TABLE follows (
-    id SERIAL PRIMARY KEY,
-    follower_id int, foreign key (follower_id) references usuario(id_usuario),
-    followed_id int, foreign key (followed_id) references usuario(id_usuario),
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Table: comment
+CREATE TABLE comment (
+    id_comment SERIAL PRIMARY KEY,
+    content TEXT,
+    creation_date TIMESTAMP,
+    id_user INT REFERENCES normalUser(id_user),
+    id_post INT REFERENCES post(id_post)
+
+);
+
+-- Table: category
+CREATE TABLE category (
+    id_category SERIAL PRIMARY KEY,
+    category_name VARCHAR(50)
 );
