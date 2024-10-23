@@ -6,6 +6,7 @@ import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import session from 'express-session'
 
 const corsOptions = {
   origin: 'http://localhost:3000', // Especifica el origen permitido
@@ -19,15 +20,29 @@ app.use(cookieParser())
 app.use(cors(corsOptions))
 
 app.use((req, res, next) => {
-  const token = req.cookies.access_token
-  req.session = { user: null }
+  const token = req.cookies.access_token;  
+  req.session.user = null;
 
-  try {
-    const data = jwt.verify(token, SECRET_JWT_KEY)
-    req.session.user = data
-  } catch (error) { }
-  next()
-})
+  if (token){
+    try {
+      const data = jwt.verify(token, SECRET_JWT_KEY);
+      req.session.user = data;
+      req.session.userId = data.id_user;
+    } catch (error) { 
+      console.error("Token verification failed: " , error);
+    }    
+  }
+  next();
+});
+
+app.use(session({
+  secret: "some_secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60
+  }
+}))
 
 app.get('/', (req, res) => {
   const { user } = req.session
@@ -74,8 +89,13 @@ app.post('/logout', (req, res) => {
     .json({ message: 'Logout successful ' })
 })
 
-app.post('/createPost', async (req, res) => {
-  const { title, description, id_category, id_user, file, typefile } = req.body
+app.post('/createPost', async (req, res) => {  
+  const userId = req.session.userId; // Accede al ID del usuario desde la sesión
+  if (!userId) {
+    return res.status(401).send('Usuario no autenticado');
+  }
+
+  const { title, description, id_category, id_user, file, typefile } = req.body;
 
   try{
     const newPost = await User.createPost( 
@@ -83,14 +103,14 @@ app.post('/createPost', async (req, res) => {
         title,
         description,
         id_category,
-        id_user,
+        id_user: userId,
         file,
         typefile
       })
       res.status(201).send({ id: newPost.id_post })
   } catch (error) {
     res.status(400).send({ error: error.message })
-  }
+  }  
 })
 
 app.post('/protected', async (req, res) => {
