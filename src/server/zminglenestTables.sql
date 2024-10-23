@@ -36,13 +36,15 @@ CREATE TABLE post (
     title VARCHAR(100),
     description VARCHAR(300),
     creation_date TIMESTAMP,
+    fyle text,
+    typeFile text,
     id_category INT REFERENCES category(id_category),
     id_user INT REFERENCES normalUser(id_user)
 
 );
 
 -- Table: "like"
-CREATE TABLE "like" (
+CREATE TABLE likes (
     id_user INT REFERENCES normalUser(id_user),
     id_post INT REFERENCES post(id_post),
     creation_date TIMESTAMP,
