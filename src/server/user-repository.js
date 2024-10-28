@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import pkg from 'pg' // Importa el paquete pg
 import { SALT_ROUNDS } from './config.js'
-const { Pool } = pkg // Desestructura Pool desde el paquete
+const {Pool } = pkg
 
 
 // Configura el pool de conexiones
@@ -11,15 +11,6 @@ export const pool = new Pool({
   user: 'postgres',
   password: 'root'
 })
-
-export const poolDeme = new Pool({
-  host: 'localhost',
-  database: 'miglenest',
-  user: 'demetrio',
-  password: 'Bjadfj182503#',
-  port: 5432
-})
-
 export class User {
   static async create ({ username, email, password, userType }) {
     // Validaciones básicas
@@ -27,10 +18,10 @@ export class User {
     Validation.email(email)
     Validation.password(password)
     // Conectar con la base de datos usando el pool
-    const client = userType === 'demetrio' ? await poolDeme.connect() : await pool.connect();
+    const client = userType === pool
     try {
       // Verificar si ya existe el usuario
-      const queryText = 'SELECT * FROM public.normalUser WHERE username = $1 OR email = $2'
+      const queryText = 'SELECT * FROM public.normaluser WHERE username = $1 OR email = $2'
       const result = await client.query(queryText, [username, email])
       
 
@@ -41,7 +32,7 @@ export class User {
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
       // Insertar el nuevo usuario en la base de datos
       const insertQuery = `
-        INSERT INTO public.normalUser (username, email, password, creation_date, profile_img, background, description)
+        INSERT INTO public.normaluser (username, email, password, creation_date, profile_img, background, description)
         VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'default.png', 'defaultBackground.png',  '')
         RETURNING id_user;
       `
@@ -82,7 +73,7 @@ export class User {
   static async login ({ email, password }) {
     Validation.email(email)
     Validation.password(password)
-    const client = await pool.connect() && await poolDeme.connect();
+    const client = await pool.connect() 
     const queryText = 'SELECT * FROM public.normalUser WHERE email = $1'
     const result = await client.query(queryText, [email])
     // Verificar si el usuario no existe
@@ -118,7 +109,7 @@ export class User {
       VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6)
       RETURNING *;
     `;
-    const result = await pool.query(queryText, [title, description, id_category, id_user, file, typefile]) && await poolDeme.query(queryText, [title, description, id_category, id_user, file, typefile]);
+    const result = await pool.query(queryText, [title, description, id_category, id_user, file, typefile])
   
     return result.rows[0];
   }

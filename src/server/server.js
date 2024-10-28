@@ -9,7 +9,8 @@ import { fileURLToPath } from 'url'
 import session from 'express-session'
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Especifica el origen permitido
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Especifica el origen permitido
   credentials: true // Habilita el envío de cookies
 }
 const __filename = fileURLToPath(import.meta.url)
@@ -21,7 +22,7 @@ app.use(cors(corsOptions))
 
 app.use((req, res, next) => {
   const token = req.cookies.access_token;  
-  req.session.user = null;
+  
 
   if (token){
     try {
@@ -95,7 +96,7 @@ app.post('/createPost', async (req, res) => {
     return res.status(401).send('Usuario no autenticado');
   }
 
-  const { title, description, id_category, id_user, file, typefile } = req.body;
+  const { title, description, id_category, file, typefile } = req.body;
 
   try{
     const newPost = await User.createPost( 
