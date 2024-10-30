@@ -1,172 +1,167 @@
-import cookieParser from 'cookie-parser'
-import { PORT, SECRET_JWT_KEY } from './config.js'
-import { pool, User } from './user-repository.js'
-import express from 'express'
-import cors from 'cors'
-import jwt from 'jsonwebtoken'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import session from 'express-session'
+import express from 'express';
+import session from 'express-session'; // Cambiado a import
+import cookieParser from 'cookie-parser'; // Puedes eliminar esto si no usas cookies
+import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { PORT, SECRET_JWT_KEY } from './config.js';
+import { pool, User } from './user-repository.js';
+import multer from 'multer';
 
+const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.json());
+
+// Configuración de CORS
 const corsOptions = {
   origin: 'http://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Especifica el origen permitido
   credentials: true // Habilita el envío de cookies
-}
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const app = express()
-app.use(express.json())
-app.use(cookieParser())
-app.use(cors(corsOptions))
+};
 
-app.use((req, res, next) => {
-  const token = req.cookies.access_token;  
-  
+app.use(cors(corsOptions));
 
-  if (token){
-    try {
-      const data = jwt.verify(token, SECRET_JWT_KEY);
-      req.session.user = data;
-      req.session.userId = data.id_user;
-    } catch (error) { 
-      console.error("Token verification failed: " , error);
-    }    
+// Configuración de la sesión
+app.use(session({
+  secret: SECRET_JWT_KEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Cambiar a true si usas HTTPS
+}));
+
+const isAuthenticated = (req, res, next) => {
+  if (req.session.user) {
+    return next();
   }
+  res.status(401).send('Unauthorized');
+};
+
+// Middleware para extraer información del usuario de la sesión
+app.use((req, res, next) => {
+  req.session.user = req.session.user || null; // Mantener la sesión
   next();
 });
 
-app.use(session({
-  secret: "some_secret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 1000 * 60 * 60
-  }
-}))
-
 app.get('/', (req, res) => {
-  const { user } = req.session
-  res.render('index', user)
-})
+  const { user } = req.session;
+  res.render('index', user);
+});
 
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body
   try {
-    const user = await User.login({ email, password })
-    const token = jwt.sign(
-      { id: user.id_user, username: user.username },
-      SECRET_JWT_KEY,
-      {
-        expiresIn: '1h'
-      }
-    )
-    res
-      .cookie('access_token', token, {
-        httpOnly: true, // La cookie solo se puede acceder en el servidor
-        secure: process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https
-        sameSite: 'lax', // La cookie solo se puede acceder en el mismo dominio
-        maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de 1 hora
-      })
-      .send({ user })
-  } catch (error) {
-    res.status(401).send({ error: error.message })
-  }
-})
-
-app.post('/register', async (req, res) => {
-  const { username, email, password } = req.body
-
-  try {
-    const newUser = await User.create({ username, email, password })
-    res.status(201).send({ id: newUser.id_user })
-  } catch (error) {
-    res.status(400).send({ error: error.message })
-  }
-})
-app.post('/logout', (req, res) => {
-  res
-    .clearCookie('access_token')
-    .json({ message: 'Logout successful ' })
-})
-
-app.post('/createPost', async (req, res) => {  
-  const userId = req.session.userId; // Accede al ID del usuario desde la sesión
-  if (!userId) {
-    return res.status(401).send('Usuario no autenticado');
-  }
-
-  const { title, description, id_category, file, typefile } = req.body;
-
-  try{
-    const newPost = await User.createPost( 
-      {
-        title,
-        description,
-        id_category,
-        id_user: userId,
-        file,
-        typefile
-      })
-      res.status(201).send({ id: newPost.id_post })
-  } catch (error) {
-    res.status(400).send({ error: error.message })
-  }  
-})
-
-app.post('/protected', async (req, res) => {
-  const token = req.cookies.access_token
-  if (!token) {
-    return res.status(403).send('Acceso denegado para crear la cookie')
-  }
-
-  try {
-    const data = jwt.verify(token, SECRET_JWT_KEY)
-
-    const user = await User.findOne({ username: data.username })
-
-    // eslint-disable-next-line object-curly-newline
-    res.json({ user:
-    {
+    const { email, password } = req.body;
+    const user = await User.login({ email, password });
+    // Guarda el usuario en la sesión
+    req.session.user = {
+      id: user.iduser, // Guarda el id del usuario
       username: user.username,
-      profile_img: user.profile_img,
-      desc: user.desc,
-      join_date: user.join_date
-    }
-    })
-  } catch (error) {
-    console.error('Token verification failed:', error)
-    res.status(401).send('Access not authorized')
-  }
-})
+    };
 
+    res.json(user); // Envía la información del usuario como respuesta
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+app.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+    const newUser = await User.create({ username, email, password });
+    res.status(201).send({ id: newUser.id_user });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send('Error en el logout');
+    }
+    res.json({ message: 'Logout successful' });
+  });
+}); 
+
+// Configuración de almacenamiento para Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'src/uploads/post'); // Especifica la carpeta de destino
+  },
+  filename: (req, file, cb) => {
+    // Cambia el nombre del archivo (agregar un timestamp)
+    cb(null, Date.now() + path.extname(file.originalname)); // Agrega un timestamp al nombre del archivo
+  },
+});
+
+// Inicializa Multer con la configuración de almacenamiento
+const upload = multer({ storage: storage });
+
+// Ruta para crear un nuevo post
+app.post('/createPost', upload.single('file'), async (req, res) => {
+  const { title, description, id_category } = req.body;
+
+  // Verifica si el usuario está autenticado
+  if (!req.session.user) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  try {
+    // Cambia la ruta para almacenar en la base de datos
+    const filePath = `uploads/post/${req.file.filename}`; // Almacena la ruta relativa
+    const newPost = await User.createPost({
+      title,
+      description,
+      id_category,
+      id_user: req.session.user.id,
+      fyle: filePath, // Asegúrate de que esto se ajuste a la nueva ruta
+      typefile: req.file.mimetype, // Almacena el tipo de archivo
+    });
+    res.status(201).send({ id: newPost.id_post });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+app.post('/protected', async (req, res) => {
+  if (!req.session.user) {
+    return res.status(403).send('Acceso denegado');
+  }
+
+  try {
+    const user = await User.findOne({ username: req.session.user.username }); // Usa el username almacenado en la sesión
+
+    if (!user) {
+      return res.status(404).send('Usuario no encontrado');
+    }
+
+    res.json({
+      username: user.username,
+      profile_img: user.profile_img, // Asegúrate de que este campo exista
+      desc: user.desc || 'Sin descripción', // Proporciona un valor por defecto si no existe
+      join_date: user.join_date, // Asegúrate de que este campo exista
+    });
+  } catch (error) {
+    console.error('Error al buscar el usuario:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
 pool.connect(err => {
   if (err) {
-    console.error('Error al conectar a la base de datos: ', err)
-    throw err
+    console.error('Error al conectar a la base de datos: ', err);
+    throw err;
   } else {
-    console.log('Conexion exitosa a la base de datos')
+    console.log('Conexión exitosa a la base de datos');
   }
-})
+});
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});
 
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.post('/getUserId', async (req, res) => {
-  const token = req.cookies.access_token;
-  if (!token) {
-    return res.status(401).json({ error: 'Usuario no autenticado' });
-  }
-
-  try {
-    const data = jwt.verify(token, SECRET_JWT_KEY);
-    const userId = data.id_user; // Asegúrate de que esta propiedad contenga el ID del usuario
-    res.json({ id_user: userId }); // Envía el ID del usuario en la respuesta
-  } catch (error) {
-    console.error('Error en la verificación del token:', error);
-    res.status(401).json({ error: 'Access not authorized' });
-  }
+app.post('/getUserId', isAuthenticated, (req, res) => {
+  res.json({ id_user: req.session.user.id }); // Envía el ID del usuario almacenado en la sesión
 });

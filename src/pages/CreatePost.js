@@ -20,21 +20,20 @@ export const CreatePost = () => {
           method: 'POST',
           credentials: 'include' // Incluye las cookies en la solicitud
         });
-        
-        console.log('Respuesta del servidor:', response); // Agregar log aquí
-  
+
         if (response.ok) {
           const data = await response.json();
           console.log('ID del usuario obtenido:', data.id_user); // Verifica el ID obtenido
-          setIdUser(data.id_user);  // Guardamos el ID del usuario
+          setIdUser(data.id_user); // Guardamos el ID del usuario
         } else {
           console.error('Error al obtener el ID del usuario:', response.statusText);
+          setError('Error al obtener el ID del usuario.');
         }
       } catch (error) {
         console.error('Error en la solicitud para obtener el ID del usuario:', error);
+        setError('Error en la solicitud para obtener el ID del usuario.');
       }
     };
-  
     fetchUserId();
   }, []);
 
@@ -47,28 +46,40 @@ export const CreatePost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Evitar el comportamiento predeterminado del formulario
     setLoading(true); // Cambia el estado de carga
-  
+
+    if (!id_user) {
+      setError('No se pudo obtener el ID del usuario.'); // Manejo de errores
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData(); // Crea un nuevo FormData
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('id_category', id_category);
+    formData.append('id_user', id_user); // Asegúrate de que esto tenga un valor
+    if (file) {
+      formData.append('file', file); // Agrega el archivo al FormData
+    }
+
     try {
       const response = await fetch('http://localhost:4000/createPost', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: title,
-          description: description,
-          id_category: id_category,
-          id_user: id_user, // Asegúrate de que esto tenga un valor
-          file: file,
-          typefile: typefile
-        })
+        body: formData, // Envía el FormData en lugar de JSON
+        credentials: 'include' // Incluye cookies en la solicitud si es necesario
       });
-  
-      const data = await response.json();
-      console.log(data);
-      // Puedes hacer algo con la respuesta aquí, como redirigir al usuario
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        navigate('/'); // Redirige al usuario tras la creación exitosa
+      } else {
+        const data = await response.json(); // Asegúrate de esperar la respuesta JSON
+        setError(data.error || 'Error al crear la publicación.'); // Manejo de errores
+      }
     } catch (error) {
       console.error('Error al crear la publicación:', error);
+      setError('Error al crear la publicación.');
     } finally {
       setLoading(false); // Finaliza el estado de carga
     }

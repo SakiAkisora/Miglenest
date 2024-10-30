@@ -95,6 +95,7 @@ export class User {
 
     return {
 
+      iduser: user.id_user,
       username: user.username,
       profile_img: user.profile_img,
       background: user.background,
@@ -103,13 +104,13 @@ export class User {
 
     }
   }
-  static async createPost({ title, description, file, typefile, id_category, id_user }) {
+  static async createPost({ title, description, fyle, typefile, id_category, id_user }) {
     const queryText = `
-      INSERT INTO post (title, description, creation_date, id_category, id_user, file, typefile)
+      INSERT INTO post (title, description, creation_date, id_category, id_user, fyle, typefile)
       VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6)
       RETURNING *;
     `;
-    const result = await pool.query(queryText, [title, description, id_category, id_user, file, typefile])
+    const result = await pool.query(queryText, [title, description, id_category, id_user, fyle, typefile]);
   
     return result.rows[0];
   }
