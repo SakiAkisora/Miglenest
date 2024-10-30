@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { AsideRight } from '../complements/AsideRight.js'
+import React, { useEffect, useState } from 'react';
+import { AsideRight } from '../complements/AsideRight.js';
 
 export const Profile = () => {
-  const [username, setUsername] = useState('')
-  const [profileImg, setProfileImg] = useState('')
-  const [desc, setDesc] = useState('')
-  const [date, setDate] = useState('')
+  const [username, setUsername] = useState('');
+  const [profileImg, setProfileImg] = useState('');
+  const [desc, setDesc] = useState('');
+  const [date, setDate] = useState('');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -13,25 +13,26 @@ export const Profile = () => {
         const response = await fetch('http://localhost:4000/protected', {
           method: 'POST',
           credentials: 'include' // Esto permite incluir cookies en la solicitud
-        })
+        });
 
         if (response.ok) {
-          const data = await response.json()
-          console.log('Datos del usuario:', data) // Log para verificar que los datos se reciben correctamente
-          setUsername(data.user.username)
-          setDate(data.user.join_date) // Asegúrate de usar "join_date" aquí
-          setProfileImg(data.user.profile_img)
-          setDesc(data.user.desc)
+          const data = await response.json();
+          console.log('Datos del usuario:', data); // Log para verificar que los datos se reciben correctamente
+          // Ajustar aquí en base a la estructura de datos que envías desde el backend
+          setUsername(data.username); // Cambiado para reflejar la estructura correcta
+          setDate(data.join_date); // Asegúrate de que esto esté correcto
+          setProfileImg(data.profile_img);
+          setDesc(data.desc);
         } else {
-          console.error('Error al obtener la información del usuario:', response.statusText)
+          console.error('Error al obtener la información del usuario:', response.statusText);
         }
       } catch (error) {
-        console.error('Error al hacer la solicitud:', error)
+        console.error('Error al hacer la solicitud:', error);
       }
-    }
+    };
 
-    fetchUserInfo()
-  }, [])
+    fetchUserInfo();
+  }, []);
 
   return (
     <div>
@@ -59,5 +60,5 @@ export const Profile = () => {
         <hr className='w-full absolute top-[65%] border-2 border-gray-300'/>
       </div>
     </div>
-  )
-}
+  );
+};
