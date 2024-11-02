@@ -2,14 +2,6 @@
 CREATE DATABASE miglenest;
 \c miglenest
 
-
-
--- Table: administrator
-CREATE TABLE administrator (
-    id_administrator SERIAL PRIMARY KEY,
-    id_user INT NOT NULL REFERENCES normalUser(id_user) ON UPDATE CASCADE
-);
-
 -- Table: user
 CREATE TABLE normalUser (
     id_user SERIAL PRIMARY KEY,
@@ -21,6 +13,11 @@ CREATE TABLE normalUser (
     background TEXT DEFAULT 'default.png',
     description VARCHAR(300)
 );
+-- Table: administrator
+CREATE TABLE administrator (
+    id_administrator SERIAL PRIMARY KEY,
+    id_user INT NOT NULL REFERENCES normalUser(id_user) ON UPDATE CASCADE
+);
 
 -- Table: follower
 CREATE TABLE follower (
@@ -29,6 +26,14 @@ CREATE TABLE follower (
     creation_date TIMESTAMP,
     PRIMARY KEY (follower, followed)
 );
+
+
+-- Table: category
+CREATE TABLE category (
+    id_category SERIAL PRIMARY KEY,
+    category_name VARCHAR(50)
+);
+
 
 -- Table: post
 CREATE TABLE post (
@@ -60,10 +65,4 @@ CREATE TABLE comment (
     id_user INT REFERENCES normalUser(id_user),
     id_post INT REFERENCES post(id_post)
 
-);
-
--- Table: category
-CREATE TABLE category (
-    id_category SERIAL PRIMARY KEY,
-    category_name VARCHAR(50)
 );

@@ -2,7 +2,6 @@ import express from 'express';
 import session from 'express-session'; // Cambiado a import
 import cookieParser from 'cookie-parser'; // Puedes eliminar esto si no usas cookies
 import cors from 'cors';
-import jwt from 'jsonwebtoken';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PORT, SECRET_JWT_KEY } from './config.js';
@@ -165,3 +164,15 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.post('/getUserId', isAuthenticated, (req, res) => {
   res.json({ id_user: req.session.user.id }); // Envía el ID del usuario almacenado en la sesión
 });
+
+app.post('/getPosts', async (req, res) => {
+  const { limit } = req.body; // Opcionalmente, puedes pasar un límite desde el frontend
+
+  try {
+    const posts = await User.getPosts(limit || 10); // Llama al método `getPosts` con un límite por defecto de 10
+    res.status(200).json(posts); // Envía la lista de posts al frontend
+  } catch (error) {
+    console.error('Error al obtener los posts:', error);
+    res.status(500).json({ message: 'Error al obtener los posts' }); // Manejo de errores
+  }
+})

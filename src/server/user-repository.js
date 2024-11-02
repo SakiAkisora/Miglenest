@@ -18,7 +18,7 @@ export class User {
     Validation.email(email)
     Validation.password(password)
     // Conectar con la base de datos usando el pool
-    const client = userType === pool
+    const client = await pool.connect() 
     try {
       // Verificar si ya existe el usuario
       const queryText = 'SELECT * FROM public.normaluser WHERE username = $1 OR email = $2'
@@ -113,6 +113,35 @@ export class User {
     const result = await pool.query(queryText, [title, description, id_category, id_user, fyle, typefile]);
   
     return result.rows[0];
+  }
+
+  static async getPosts(limit = 10) {
+    const queryText = `
+      SELECT title, description, creation_date, fyle
+      FROM public.post
+      ORDER BY creation_date DESC
+      LIMIT $1;
+    `;
+  
+    try {
+      const result = await pool.query(queryText, [limit]);
+      return result.rows.map(post => {
+        // Formateo de la fecha de creación a 'DD/MM/YYYY' para cada post
+        const formattedDate = new Date(post.creation_date).toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+  
+        return {
+          ...post,
+          creation_date: formattedDate,
+        };
+      });
+    } catch (error) {
+      console.error('Error al obtener los posts:', error);
+      throw new Error('Ocurrió un problema al intentar obtener los posts');
+    }
   }
 }
 class Validation {
