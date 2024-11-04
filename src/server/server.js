@@ -82,7 +82,7 @@ app.post('/logout', (req, res) => {
     }
     res.json({ message: 'Logout successful' });
   });
-}); 
+});
 
 // Configuración de almacenamiento para Multer
 const storage = multer.diskStorage({
@@ -176,3 +176,26 @@ app.post('/getPosts', async (req, res) => {
     res.status(500).json({ message: 'Error al obtener los posts' }); // Manejo de errores
   }
 })
+app.post('/toggleLike', async (req, res) => {
+  // Verifica si el usuario está autenticado
+  if (!req.session.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { postId } = req.body; // Obtiene el ID del post
+  const userId = req.session.user.id; // Obtiene el ID del usuario
+
+  // Verifica que postId sea válido
+  if (!postId) {
+      return res.status(400).json({ error: 'Post ID is required' });
+  }
+
+  try {
+      // Llama al método toggleLike en el repositorio de usuarios
+      const likes = await User.toggleLike({ userId, postId });
+      res.json({ likes }); // Responde con el nuevo número de likes
+  } catch (error) {
+      console.error('Error al actualizar el like:', error);
+      res.status(500).json({ error: 'Error al manejar el like' });
+  }
+});

@@ -66,3 +66,6 @@ CREATE TABLE comment (
     id_post INT REFERENCES post(id_post)
 
 );
+
+ALTER TABLE likes
+ALTER COLUMN creation_date SET DEFAULT CURRENT_TIMESTAMP;

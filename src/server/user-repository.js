@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import pkg from 'pg' // Importa el paquete pg
 import { SALT_ROUNDS } from './config.js'
-const {Pool } = pkg
+const { Pool } = pkg
 
 
 // Configura el pool de conexiones
@@ -12,18 +12,18 @@ export const pool = new Pool({
   password: 'root'
 })
 export class User {
-  static async create ({ username, email, password, userType }) {
+  static async create({ username, email, password, userType }) {
     // Validaciones básicas
     Validation.username(username)
     Validation.email(email)
     Validation.password(password)
     // Conectar con la base de datos usando el pool
-    const client = await pool.connect() 
+    const client = await pool.connect()
     try {
       // Verificar si ya existe el usuario
       const queryText = 'SELECT * FROM public.normaluser WHERE username = $1 OR email = $2'
       const result = await client.query(queryText, [username, email])
-      
+
 
       if (result.rows.length > 0 || result.rows.length > 0) {
         throw new Error('Username or email already exists')
@@ -36,9 +36,9 @@ export class User {
         VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'default.png', 'defaultBackground.png',  '')
         RETURNING id_user;
       `
-      const insertResult = await client.query(insertQuery, [username, email, hashedPassword])      
+      const insertResult = await client.query(insertQuery, [username, email, hashedPassword])
       // Retornar el nuevo usuario creado
-      return insertResult.rows[0] 
+      return insertResult.rows[0]
     } catch (error) {
       console.error('Error creando normalUser', error)
       throw error
@@ -47,7 +47,7 @@ export class User {
     }
   }
 
-  static async findOne ({ username }) {
+  static async findOne({ username }) {
     const queryText = 'SELECT username, profile_img, background, description AS desc, creation_date FROM public.normalUser WHERE username = $1'
     const result = await pool.query(queryText, [username]) && await pool.query(queryText, [username])
 
@@ -70,10 +70,10 @@ export class User {
     }
   }
 
-  static async login ({ email, password }) {
+  static async login({ email, password }) {
     Validation.email(email)
     Validation.password(password)
-    const client = await pool.connect() 
+    const client = await pool.connect()
     const queryText = 'SELECT * FROM public.normalUser WHERE email = $1'
     const result = await client.query(queryText, [email])
     // Verificar si el usuario no existe
@@ -111,18 +111,21 @@ export class User {
       RETURNING *;
     `;
     const result = await pool.query(queryText, [title, description, id_category, id_user, fyle, typefile]);
-  
+
     return result.rows[0];
   }
 
   static async getPosts(limit = 20) {
     const queryText = `
-      SELECT title, description, creation_date, fyle
-      FROM public.post
-      ORDER BY creation_date DESC
+      SELECT p.id_post, p.title, p.description, p.creation_date, p.fyle,
+             COALESCE(COUNT(l.id_user), 0) AS likes
+      FROM public.post p
+      LEFT JOIN likes l ON p.id_post = l.id_post
+      GROUP BY p.id_post
+      ORDER BY p.creation_date DESC
       LIMIT $1;
     `;
-  
+
     try {
       const result = await pool.query(queryText, [limit]);
       return result.rows.map(post => {
@@ -132,7 +135,7 @@ export class User {
           month: '2-digit',
           year: 'numeric',
         });
-  
+
         return {
           ...post,
           creation_date: formattedDate,
@@ -142,33 +145,75 @@ export class User {
       console.error('Error al obtener los posts:', error);
       throw new Error('Ocurrió un problema al intentar obtener los posts');
     }
+}
+
+  static async toggleLike({ userId, postId }) {
+    const client = await pool.connect();
+    try {
+      // Verifica si el usuario ya dio like
+      const likeCheckQuery = 'SELECT * FROM likes WHERE id_user = $1 AND id_post = $2';
+      const likeCheckResult = await client.query(likeCheckQuery, [userId, postId]);
+
+      if (likeCheckResult.rows.length > 0) {
+        // Si ya dio like, eliminar el like
+        await client.query('DELETE FROM likes WHERE id_user = $1 AND id_post = $2', [
+          userId,
+          postId,
+        ]);
+        // Decrementa el contador de likes en el post
+        await client.query('UPDATE posts SET likes = likes - 1 WHERE id_post = $1', [postId]);
+      } else {
+        // Si no ha dado like, añadir el like
+        await client.query(
+          'INSERT INTO likes (id_user, id_post, creation_date) VALUES ($1, $2, CURRENT_TIMESTAMP)',
+          [userId, postId]
+        );
+        // Incrementa el contador de likes en el post
+        await client.query('UPDATE posts SET likes = likes + 1 WHERE id_post = $1', [postId]);
+      }
+
+      // Obtén el nuevo número de likes
+      const updatedPost = await client.query('SELECT likes FROM posts WHERE id_post = $1', [postId]);
+
+      // Verifica que el post exista
+      if (updatedPost.rows.length === 0) {
+        throw new Error('Post not found');
+      }
+
+      return updatedPost.rows[0].likes; // Retorna el nuevo número de likes
+    } catch (error) {
+      console.error('Error al manejar el like:', error);
+      throw error;
+    } finally {
+      client.release(); // Asegúrate de liberar el cliente de la base de datos
+    }
   }
 }
 class Validation {
   static username(username) {
-      if (typeof username !== 'string') throw new Error('Username must be a string');
-      if (username.length < 3) throw new Error('Username must be at least 3 characters long');
+    if (typeof username !== 'string') throw new Error('Username must be a string');
+    if (username.length < 3) throw new Error('Username must be at least 3 characters long');
   }
 
   static email(email) {
-      if (typeof email !== 'string') throw new Error('Email must be a string');
-      if (!email.includes('@')) throw new Error('Invalid email format');
+    if (typeof email !== 'string') throw new Error('Email must be a string');
+    if (!email.includes('@')) throw new Error('Invalid email format');
   }
 
   static password(password) {
-      if (typeof password !== 'string') throw new Error('Password must be a string');
-      if (password.length < 4) throw new Error('Password must be at least 4 characters long');
+    if (typeof password !== 'string') throw new Error('Password must be a string');
+    if (password.length < 4) throw new Error('Password must be at least 4 characters long');
   }
 
   static postTitle(postTitle) {
-      if (typeof postTitle !== 'string') throw new Error('Title must be a string');
-      if (postTitle.length < 4) throw new Error('Title must be at least 4 characters long');
-      if (postTitle.length > 30) throw new Error('Title must not be more than 30 characters long');
+    if (typeof postTitle !== 'string') throw new Error('Title must be a string');
+    if (postTitle.length < 4) throw new Error('Title must be at least 4 characters long');
+    if (postTitle.length > 30) throw new Error('Title must not be more than 30 characters long');
   }
 
   static postDescription(postDescription) {
-      if (typeof postDescription !== 'string') throw new Error('Description must be a string');
-      if (postDescription.length < 4) throw new Error('Description must be at least 4 characters long');
-      if (postDescription.length > 300) throw new Error('Description must not be more than 300 characters long');
+    if (typeof postDescription !== 'string') throw new Error('Description must be a string');
+    if (postDescription.length < 4) throw new Error('Description must be at least 4 characters long');
+    if (postDescription.length > 300) throw new Error('Description must not be more than 300 characters long');
   }
 }
