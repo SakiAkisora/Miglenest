@@ -14,34 +14,34 @@ export const pool = new Pool({
 export class User {
   static async create ({ username, email, password, userType }) {
     // Validaciones básicas
-    Validation.username(username)
-    Validation.email(email)
-    Validation.password(password)
+    const cleanedUsername = Validation.username(username)
+    const cleanedEmail = Validation.email(email)
+    const cleanedPassword = Validation.password(password)
     // Conectar con la base de datos usando el pool
     const client = await pool.connect() 
     try {
       // Verificar si ya existe el usuario
       const queryText = 'SELECT * FROM public.normaluser WHERE username = $1 OR email = $2'
-      const result = await client.query(queryText, [username, email])
+      const result = await client.query(queryText, [cleanedUsername, cleanedEmail])
       
 
       if (result.rows.length > 0 || result.rows.length > 0) {
         throw new Error('Username or email already exists')
       }
 
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+      const hashedPassword = await bcrypt.hash(cleanedPassword, SALT_ROUNDS)
       // Insertar el nuevo usuario en la base de datos
       const insertQuery = `
         INSERT INTO public.normaluser (username, email, password, creation_date, profile_img, background, description)
         VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'default.png', 'defaultBackground.png',  '')
         RETURNING id_user;
       `
-      const insertResult = await client.query(insertQuery, [username, email, hashedPassword])      
+      const insertResult = await client.query(insertQuery, [cleanedUsername, cleanedEmail, hashedPassword])      
       // Retornar el nuevo usuario creado
       return insertResult.rows[0] 
     } catch (error) {
-      console.error('Error creando normalUser', error)
-      throw error
+      alert.error('Error creando normalUser', error)
+      throw error      
     } finally {
       client.release() // Asegúrate de liberar el cliente
     }
@@ -145,30 +145,76 @@ export class User {
   }
 }
 class Validation {
+  
   static username(username) {
-      if (typeof username !== 'string') throw new Error('Username must be a string');
-      if (username.length < 3) throw new Error('Username must be at least 3 characters long');
+    //verificar si el username es de tipo string
+    if (typeof username !== 'string') throw new Error('Username must be a string');
+    //Eliminar espacios al inicio y al final
+    username = username.trim()
+    //verificar si el username esta vacio despues de eliminar espacios
+    if (username.length === 0) throw new Error('Username cannot be empty');
+    //verificar si hay espacios en el medio
+    if (/\s/.test(username)) throw new Error ('Username cannot contain spaces') // "/\s/" se utiliza para comprobar si hay espacios en el medio del username
+    //verificar si el username tiene menos de 3 caracteres o mas de 50
+    if (username.length < 3 || username.length > 50) throw new Error('Username must be at least 3 characters long and maximun 50 characters long');
+    // Verificar caracteres permitidos: solo letras, números y guiones bajos
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      throw new Error('Username can only contain letters, numbers, and underscores');
+    }
+
+    return username;
   }
 
   static email(email) {
       if (typeof email !== 'string') throw new Error('Email must be a string');
+      email = email.trim()
+      if (email.length === 0) throw new Error ("Email cannot be empty");
       if (!email.includes('@')) throw new Error('Invalid email format');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Invalid email format');
+      if (email.length < 5 || email.length > 254) throw new Error('Email must be between 5 and 254 characters long');
+      
   }
 
   static password(password) {
       if (typeof password !== 'string') throw new Error('Password must be a string');
       if (password.length < 4) throw new Error('Password must be at least 4 characters long');
+      if (password.length > 64) throw new Error('Password must be at maximun 44 characters long');
+      if (!/[A-Z]/.test(password)) throw new Error('Password must contain at least one UPPERCASE letter');    
+      if (!/[a-z]/.test(password)) throw new Error('Password must contain at least one lowercase letter');
+      if (!/[0-9]/.test(password)) throw new Error('Password must contain at least one number (0 - 9)');
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) throw new Error('Password must contain at least one special character');      
+      if (this.email === password || this.username === password) throw new Error('Password cannot be same as email or username');
   }
-
   static postTitle(postTitle) {
+      const forbiddenWords = [
+      // Español
+      'cabrón', 'pendejo', 'chingar', 'hijo de puta', 'güey', 'boludo', 'gil', 'gonorrea', 'marica', 'weón', 'conchetumadre', 'hijo de mil puta', 'mierda', 'chucha', 'concha de su madre',    
+      // Inglés
+      'asshole', 'bastard', 'cunt', 'motherfucker', 'shithead', 'dumbass', 'bitch','fuck'];
+    
       if (typeof postTitle !== 'string') throw new Error('Title must be a string');
       if (postTitle.length < 4) throw new Error('Title must be at least 4 characters long');
       if (postTitle.length > 30) throw new Error('Title must not be more than 30 characters long');
+      if (!/^[a-zA-Z0-9\s]+$/.test(postTitle)) throw new Error('Title can only contain letters, numbers, and spaces');
+      
+      if (forbiddenWords.some(word => postTitle.toLowerCase().includes(word))) {
+        throw new Error('Title contains inappropriate content');
+      }      
   }
 
   static postDescription(postDescription) {
+      const forbiddenWords = [
+      // Español
+      'cabrón', 'pendejo', 'chingar', 'hijo de puta', 'güey', 'boludo', 'gil', 'gonorrea', 'marica', 'weón', 'conchetumadre', 'hijo de mil puta', 'mierda', 'chucha', 'concha de su madre',    
+      // Inglés
+      'asshole', 'bastard', 'cunt', 'motherfucker', 'shithead', 'dumbass', 'bitch','fuck'];
+    
       if (typeof postDescription !== 'string') throw new Error('Description must be a string');
       if (postDescription.length < 4) throw new Error('Description must be at least 4 characters long');
       if (postDescription.length > 300) throw new Error('Description must not be more than 300 characters long');
+      if (forbiddenWords.some(word => postDescription.toLowerCase().includes(word))) {
+        throw new Error('Description contains inappropriate content');
+      }
+    
   }
 }
