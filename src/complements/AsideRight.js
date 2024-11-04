@@ -3,7 +3,7 @@ import React from 'react'
 export const AsideRight = () => {
   return (
     <div>
-        <div className='absolute top-[10.6%] right-0 border-[2px] border-gray-300 h-[89.4vh] w-1/4 p-[1%]'>
+        <div className='fixed top-[10.6%] right-0 border-[2px] border-gray-300 h-[89.4vh] w-1/4 p-[1%]'>
             <div className='border-[2px] border-gray-300 p-[0%_5%_5%_5%] mb-[5%]'>
                 <div className='accounts__followed'>
                     <h2 className='text-[20px] text-[#6312aa] mb-[2%] font-bold'>Cuentas a las que sigues</h2>

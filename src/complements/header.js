@@ -77,7 +77,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
 
   return (
     <div>
-      <div className="absolute bg-[#6312aa] w-full flex items-center p-[0px_10px_10px_10px], top-0">
+      <div className="fixed bg-[#6312aa] w-full flex items-center p-[0px_10px_10px_10px], top-0 z-50">
         <button className="relative w-[55px] h-[50px] transform ml-[10px] mr-[25px] mt-[-20px] cursor-pointer mb-[-20px] border-none" onClick={toggleMenu}>
           <img className='invert' src={menu}></img>
         </button>

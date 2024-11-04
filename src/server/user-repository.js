@@ -115,7 +115,7 @@ export class User {
     return result.rows[0];
   }
 
-  static async getPosts(limit = 10) {
+  static async getPosts(limit = 20) {
     const queryText = `
       SELECT title, description, creation_date, fyle
       FROM public.post
