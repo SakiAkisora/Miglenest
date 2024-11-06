@@ -1,6 +1,5 @@
 import express from 'express';
 import session from 'express-session'; // Cambiado a import
-import cookieParser from 'cookie-parser'; // Puedes eliminar esto si no usas cookies
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -71,7 +70,7 @@ app.post('/register', async (req, res) => {
     const newUser = await User.create({ username, email, password });
     res.status(201).send({ id: newUser.id_user });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
