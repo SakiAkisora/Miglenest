@@ -14,29 +14,29 @@ export const pool = new Pool({
 export class User {
   static async create ({ username, email, password, userType }) {
     // Validaciones básicas
-    const cleanedUsername = Validation.username(username)
-    const cleanedEmail = Validation.email(email)
-    const cleanedPassword = Validation.password(password)
+    Validation.username(username)
+    Validation.email(email)
+    Validation.password(password)
     // Conectar con la base de datos usando el pool
     const client = await pool.connect() 
     try {
       // Verificar si ya existe el usuario
       const queryText = 'SELECT * FROM public.normaluser WHERE username = $1 OR email = $2'
-      const result = await client.query(queryText, [cleanedUsername, cleanedEmail])
+      const result = await client.query(queryText, [username,email])
       
 
       if (result.rows.length > 0 || result.rows.length > 0) {
         throw new Error('Username or email already exists')
       }
 
-      const hashedPassword = await bcrypt.hash(cleanedPassword, SALT_ROUNDS)
+      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
       // Insertar el nuevo usuario en la base de datos
       const insertQuery = `
         INSERT INTO public.normaluser (username, email, password, creation_date, profile_img, background, description)
         VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'default.png', 'defaultBackground.png',  '')
         RETURNING id_user;
       `
-      const insertResult = await client.query(insertQuery, [cleanedUsername, cleanedEmail, hashedPassword])      
+      const insertResult = await client.query(insertQuery, [username,email, hashedPassword])      
       // Retornar el nuevo usuario creado
       return insertResult.rows[0] 
     } catch (error) {
