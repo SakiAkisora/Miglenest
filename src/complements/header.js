@@ -1,4 +1,3 @@
-/* eslint-disable multiline-ternary */
 import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/image/Icon2.png'

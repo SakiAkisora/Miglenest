@@ -146,6 +146,42 @@ export class User {
       throw new Error('Ocurrió un problema al intentar obtener los posts');
     }
 }
+// En tu User Repository
+static async getPostById(decodedId) {
+  const queryText = `
+    SELECT p.id_post, p.title, p.description, p.creation_date, p.fyle,
+           COALESCE(COUNT(l.id_user), 0) AS likes
+    FROM public.post p
+    LEFT JOIN likes l ON p.id_post = l.id_post
+    WHERE p.id_post = $1
+    GROUP BY p.id_post;
+  `;
+
+  try {
+    const result = await pool.query(queryText, [decodedId]);
+    
+    if (result.rows.length === 0) {
+      throw new Error('Post no encontrado');
+    }
+
+    // Formateo de la fecha de creación a 'DD/MM/YYYY'
+    const post = result.rows[0];
+    const formattedDate = new Date(post.creation_date).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    return {
+      ...post,
+      creation_date: formattedDate,
+    };
+  } catch (error) {
+    console.error('Error al obtener el post:', error);
+    throw new Error('Ocurrió un problema al intentar obtener el post');
+  }
+}
+
 
   static async toggleLike({ userId, postId }) {
     const client = await pool.connect();

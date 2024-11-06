@@ -198,3 +198,24 @@ app.post('/toggleLike', async (req, res) => {
       res.status(500).json({ error: 'Error al manejar el like' });
   }
 });
+// Ruta para obtener un post
+app.get('/:encodedId', async (req, res) => {
+  const encodedId = req.params.encodedId;
+  
+  // Decodificar el ID de Base64
+  const decodedId = Buffer.from(encodedId, 'base64').toString('utf-8');
+
+  // Asegúrate de que el valor decodificado sea un número
+  const decodedIdInt = parseInt(decodedId, 10);
+  if (isNaN(decodedIdInt)) {
+    return res.status(400).json({ message: 'ID inválido' });
+  }
+
+  try {
+    const post = await User.getPostById(decodedIdInt); // Usa el valor como entero
+    res.json(post);
+  } catch (error) {
+    console.error('Error al obtener el post:', error);
+    res.status(404).json({ message: 'Post no encontrado desde el servidor' });
+  }
+});

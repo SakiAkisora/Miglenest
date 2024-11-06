@@ -13,6 +13,7 @@ import './App.css'
 import { Information } from './pages/information.js'
 import { Profile } from './pages/profile.js'
 import { CreatePost } from './pages/CreatePost.js'
+import PostPage from './complements/PostPage.js'  // Asegúrate de tener un componente para el post
 
 function AnimatedRoutes () {
   const location = useLocation()
@@ -21,7 +22,7 @@ function AnimatedRoutes () {
     <TransitionGroup>
       <CSSTransition key={location.key} classNames="fade" timeout={0}>
         <Routes location={location}>
-          <Route path="/" element = { <Navigate to="/home" />} />
+          <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
           <Route path="/category" element={<Category />} />
           <Route path="/saved" element={<VideosSaved />} />
@@ -29,7 +30,10 @@ function AnimatedRoutes () {
           <Route path="/settings/*" element={<Configuration />} />
           <Route path="/information/*" element={<Information />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path ="/create" element={<CreatePost />} />
+          <Route path="/create" element={<CreatePost />} />
+          
+          {/* Ruta para la publicación con ID codificado en Base64 */}
+          <Route path="/:encodedId" element={<PostPage />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>
