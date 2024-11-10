@@ -13,10 +13,9 @@ import './App.css'
 import { Information } from './pages/information.js'
 import { Profile } from './pages/profile.js'
 import { CreatePost } from './pages/CreatePost.js'
-
+import { ShowComments } from './complements/commentVisualization.js'
 function AnimatedRoutes () {
   const location = useLocation()
-
   return (
     <TransitionGroup>
       <CSSTransition key={location.key} classNames="fade" timeout={0}>
@@ -30,19 +29,17 @@ function AnimatedRoutes () {
           <Route path="/information/*" element={<Information />} />
           <Route path="/profile" element={<Profile />} />
           <Route path ="/create" element={<CreatePost />} />
+          <Route path ="/home/post/comments" element={<ShowComments />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>
   )
 }
-
 function Layout () {
   const [isMenuActive, setIsMenuActive] = useState(true)
-
   const toggleMenu = () => {
     setIsMenuActive(!isMenuActive)
   }
-
   return (
     <>
       <AsideMenu isMenuActive={isMenuActive} setIsMenuActive={setIsMenuActive} />
@@ -51,7 +48,6 @@ function Layout () {
     </>
   )
 }
-
 function App () {
   return (
     <div>
@@ -62,7 +58,6 @@ function App () {
     </div>
   )
 }
-
 function AppWrapper () {
   return (
     <Router>
@@ -70,5 +65,4 @@ function AppWrapper () {
     </Router>
   )
 }
-
 export default AppWrapper
