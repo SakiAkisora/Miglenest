@@ -13,6 +13,7 @@ import './App.css'
 import { Information } from './pages/information.js'
 import { Profile } from './pages/profile.js'
 import { CreatePost } from './pages/CreatePost.js'
+import { SearchPostsResults } from './complements/searchPostsResults.js';
 import PostPage from './complements/PostPage.js'  // Asegúrate de tener un componente para el post
 
 function AnimatedRoutes () {
@@ -33,7 +34,8 @@ function AnimatedRoutes () {
           <Route path="/create" element={<CreatePost />} />
           
           {/* Ruta para la publicación con ID codificado en Base64 */}
-          <Route path="/:encodedId" element={<PostPage />} />
+          <Route path="/watch" element={<PostPage />} />
+          <Route path="/search" element={<SearchPostsResults />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>

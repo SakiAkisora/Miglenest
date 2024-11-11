@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';  // Cambiado para obtener los parámetros de la query
 import { format } from 'date-fns';
 
 const PostPage = () => {
-  const { encodedId } = useParams();  // Obtiene el parámetro de la URL
+  const location = useLocation();  // Obtiene la ubicación actual (incluidos los parámetros de la URL)
   const [post, setPost] = useState(null);
-  const [userLikes, setUserLikes] = useState({});
+  const [userLikes, setUserLikes] = useState(false);
+
+  // Obtiene el parámetro 'p' de la query string
+  const encodedId = new URLSearchParams(location.search).get('p');
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -14,17 +17,19 @@ const PostPage = () => {
           return;
         }
 
-        // Decodifica el ID de Base64
-        const decodedId = atob(encodedId);  // atob() decodifica Base64
+        const newUrl = `http://localhost:4000/watch?p=${encodedId}`;  // Usamos 'encodedId' directamente en la URL
 
-        // Hacer la solicitud al backend para obtener el post
-        const response = await fetch(`http://localhost:4000/${encodedId}`);
+        const response = await fetch(newUrl);
         const data = await response.json();
 
         if (response.ok) {
           setPost(data);
+
+          const decodedId = atob(encodedId);  // Decodifica el ID para la verificación del like
+          const userLiked = await checkUserLikedPost(decodedId);
+          setUserLikes(userLiked);  // Actualiza el estado de like
         } else {
-          console.error('Post no encontrado desde el front');
+          console.error('Post no encontrado');
         }
       } catch (error) {
         console.error('Error al obtener el post:', error);
@@ -34,21 +39,61 @@ const PostPage = () => {
     fetchPost();
   }, [encodedId]);
 
-  if (!post) {
-    return <div>Cargando...</div>;
-  }
-
-  const handleLikeClick = async (post) => {
-    const postId = post.id_post;
-    const alreadyLiked = userLikes[postId] || false;
-
-    setUserLikes((prevLikes) => ({
-      ...prevLikes,
-      [postId]: !alreadyLiked,
-    }));
+  const handleLikeClick = async () => {
+    const alreadyLiked = userLikes;
+    setUserLikes(!alreadyLiked);
 
     try {
       const response = await fetch('http://localhost:4000/toggleLike', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId: post.id_post }),
+        credentials: 'include',
+      });
+
+      if (response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`);
+      }
+
+      const data = await response.json();
+      setPost((prevPost) => ({
+        ...prevPost,
+        likes: data.likes,
+      }));
+    } catch (error) {
+      console.error('Error al cambiar like:', error);
+      setUserLikes(alreadyLiked);
+    }
+  };
+
+  const shareAcross = (post) => {
+    const encodedId = btoa(post.id_post.toString());
+    const shareData = {
+      title: post.title,
+      text: post.description,
+      url: `http://localhost:3000/watch?p=${encodedId}`,
+    };
+
+    if (navigator.share) {
+      navigator
+        .share(shareData)
+        .then(() => console.log('Shared successfully'))
+        .catch((error) => console.log('Share failed:', error));
+    } else {
+      console.log('Share not supported');
+    }
+  };
+
+  const checkUserLikedPost = async (postId) => {
+    try {
+      const response = await fetch('http://localhost:4000/userLikedPost', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,43 +102,17 @@ const PostPage = () => {
         credentials: 'include',
       });
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}`);
-      }
-
       const data = await response.json();
-
-      setPost((prevPost) => ({
-        ...prevPost,
-        likes: data.likes,
-      }));
+      return data.userLiked;
     } catch (error) {
-      setPost((prevPost) => ({
-        ...prevPost,
-        likes: alreadyLiked ? prevPost.likes + 1 : prevPost.likes - 1,
-      }));
-      setUserLikes((prevLikes) => ({ ...prevLikes, [postId]: alreadyLiked }));
+      console.error('Error al verificar el like:', error);
+      return false;
     }
   };
 
-  const shareAcross = (post) => {
-    const encodedId = btoa(post.id_post.toString());
-
-    const shareData = {
-      title: post.title,
-      text: post.description,
-      url: `http://localhost:3000/${encodedId}`, // URL con el ID codificado
-    };
-
-    if (navigator.share) {
-      navigator
-        .share(shareData)
-        .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Error sharing', error));
-    } else {
-      console.log('No soportado');
-    }
-  };
+  if (!post) {
+    return <div>Cargando...</div>;
+  }
 
   return (
     <div className="absolute mt-[5%] ml-[18%] bg-white w-[82%] p-[0%]">
@@ -105,8 +124,8 @@ const PostPage = () => {
         <p>{post.description}</p>
         <div className="absolute mt-[0.9%] ml-[-1%] w-[30%] text-[20px]">
           <button
-            className={`border-2 border-r-2 border-black w-[32.2%] ${userLikes[post.id_post] ? 'text-white bg-purple-500' : ''}`}
-            onClick={() => handleLikeClick(post)}
+            className={`border-2 border-r-2 border-black w-[32.2%] ${userLikes ? 'text-white bg-purple-500' : ''}`}
+            onClick={handleLikeClick}
           >
             {post.likes} Likes
           </button>

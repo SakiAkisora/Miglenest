@@ -76,3 +76,9 @@ npm install bcryptjs
 npm install cookie-parser
 npm install express-session
 npm install standard -D
+npm install multer
+
+PSQL
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX post_title_trgm_idx ON post USING gin (title gin_trgm_ops);
