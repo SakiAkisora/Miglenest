@@ -15,10 +15,9 @@ import { Profile } from './pages/profile.js'
 import { CreatePost } from './pages/CreatePost.js'
 import { SearchPostsResults } from './complements/searchPostsResults.js';
 import PostPage from './complements/PostPage.js'  // Asegúrate de tener un componente para el post
-
+import { CommentVisualization } from './complements/commentVisualization.js'
 function AnimatedRoutes () {
   const location = useLocation()
-
   return (
     <TransitionGroup>
       <CSSTransition key={location.key} classNames="fade" timeout={0}>
@@ -31,24 +30,22 @@ function AnimatedRoutes () {
           <Route path="/settings/*" element={<Configuration />} />
           <Route path="/information/*" element={<Information />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/create" element={<CreatePost />} />
-          
+          <Route path="/create" element={<CreatePost />} />          
           {/* Ruta para la publicación con ID codificado en Base64 */}
           <Route path="/watch" element={<PostPage />} />
           <Route path="/search" element={<SearchPostsResults />} />
+          <Route path ="/create" element={<CreatePost />} />
+          <Route path ="/home/post/comments" element={<CommentVisualization />} /> 
         </Routes>
       </CSSTransition>
     </TransitionGroup>
   )
 }
-
 function Layout () {
   const [isMenuActive, setIsMenuActive] = useState(true)
-
   const toggleMenu = () => {
     setIsMenuActive(!isMenuActive)
   }
-
   return (
     <>
       <AsideMenu isMenuActive={isMenuActive} setIsMenuActive={setIsMenuActive} />
@@ -57,7 +54,6 @@ function Layout () {
     </>
   )
 }
-
 function App () {
   return (
     <div>
@@ -68,7 +64,6 @@ function App () {
     </div>
   )
 }
-
 function AppWrapper () {
   return (
     <Router>
@@ -76,5 +71,4 @@ function AppWrapper () {
     </Router>
   )
 }
-
 export default AppWrapper

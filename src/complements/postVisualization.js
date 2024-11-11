@@ -153,20 +153,34 @@ export const PostVisualization = ({ setError, setHasPosts }) => {
 
           <div className="absolute bottom-0 left-0 w-full text-[20px] flex">
             <button
+
               className={`border-2 border-r-0 border-black w-full rounded-bl-xl ${userLikes[post.id_post] ? 'text-white bg-purple-500' : ''}`}
               onClick={() => handleLikeClick(post)}
             >
               {post.likes} Likes
             </button>
-            <button className="border-2 border-black w-full">Comentarios</button>
+            <link to="/home/post/comments">
+              <button 
+                  className={'border-2 border-black w-[32.2%] '}>Comentarios</button>
+            </link>
             <button
               className="border-2 border-l-0 border-black w-full rounded-br-xl"
               onClick={() => shareAcross(post)}
             >
               Compartir
             </button>
-          </div>
-        </div>
+            <button
+                className={`border-2 border-r-0 border-black w-[32.2%] rounded-bl-xl ${userLikes[post.id_post] ? 'text-white bg-purple-500' : ''}`}
+                onClick={() => handleLikeClick(post)} // Pasa el objeto post completo
+            >
+                {post.likes} Likes
+              </button>
+            <link to="/home/post/comments">
+              <button 
+                  className={'border-2 border-black w-[32.2%] '}>Comentarios</button>
+            </link>
+          </div>    
+        </div>    
       ))}
     </div>
   );
