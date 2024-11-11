@@ -164,6 +164,34 @@ export class User {
       client.release(); // Asegúrate de liberar el cliente de la base de datos
     }
   }
+  static async getComments(limit = 30) {
+    const queryText = `
+      SELECT c.id_comment, c.content, c.creation_date             
+      FROM public.comment c      
+      GROUP BY p.id_comment
+      ORDER BY p.creation_date DESC
+      LIMIT $1;
+    `;
+
+    try {
+      const result = await pool.query(queryText, [limit]);
+      return result.rows.map(comments => {
+        // Formateo de la fecha de creación a 'DD/MM/YYYY' para cada post
+        const formattedDate = new Date(comments.creation_date).toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+        return {
+          ...comments,
+          creation_date: formattedDate,
+        };
+      });
+    } catch (error) {
+      console.error('Error al obtener los comentarios:', error);
+      throw new Error('Ocurrió un problema al intentar obtener los comentarios');
+    }
+}
 }
 class Validation {  
   static username(username) {
@@ -178,9 +206,7 @@ class Validation {
     //verificar si el username tiene menos de 3 caracteres o mas de 50
     if (username.length < 3 || username.length > 50) throw new Error('Username must be at least 3 characters long and maximun 50 characters long');
     // Verificar caracteres permitidos: solo letras, números y guiones bajos
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      throw new Error('Username can only contain letters, numbers, and underscores');
-    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) throw new Error('Username can only contain letters, numbers, and underscores');    
     return username;
   }
   static email(email) {
@@ -211,17 +237,15 @@ class Validation {
     if (typeof postDescription !== 'string') throw new Error('Description must be a string');
     if (postDescription.length < 4) throw new Error('Description must be at least 4 characters long');
     if (postDescription.length > 300) throw new Error('Description must not be more than 300 characters long');
-      const forbiddenWords = [
-      // Español
-      'cabrón', 'pendejo', 'chingar', 'hijo de puta', 'güey', 'boludo', 'gil', 'gonorrea', 'marica', 'weón', 'conchetumadre', 'hijo de mil puta', 'mierda', 'chucha', 'concha de su madre',    
-      // Inglés
-      'asshole', 'bastard', 'cunt', 'motherfucker', 'shithead', 'dumbass', 'bitch','fuck'];    
-      if (typeof postTitle !== 'string') throw new Error('Title must be a string');
-      if (postDescription.length < 4) throw new Error('Title must be at least 4 characters long');
-      if (postDescription.length > 30) throw new Error('Title must not be more than 30 characters long');
-      if (!/^[a-zA-Z0-9\s]+$/.test(postDescription)) throw new Error('Title can only contain letters, numbers, and spaces');     
-      if (forbiddenWords.some(word => postDescription.toLowerCase().includes(word))) {
-        throw new Error('Title contains inappropriate content');
-      }      
+    const forbiddenWords = [
+    // Español
+    'cabrón', 'pendejo', 'chingar', 'hijo de puta', 'güey', 'boludo', 'gil', 'gonorrea', 'marica', 'weón', 'conchetumadre', 'hijo de mil puta', 'mierda', 'chucha', 'concha de su madre',    
+    // Inglés
+    'asshole', 'bastard', 'cunt', 'motherfucker', 'shithead', 'dumbass', 'bitch','fuck'];    
+    if (typeof postTitle !== 'string') throw new Error('Title must be a string');
+    if (postDescription.length < 4) throw new Error('Title must be at least 4 characters long');
+    if (postDescription.length > 30) throw new Error('Title must not be more than 30 characters long');
+    if (!/^[a-zA-Z0-9\s]+$/.test(postDescription)) throw new Error('Title can only contain letters, numbers, and spaces');     
+    if (forbiddenWords.some(word => postDescription.toLowerCase().includes(word))) throw new Error('Title contains inappropriate content');      
   }
 }

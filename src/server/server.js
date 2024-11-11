@@ -198,3 +198,15 @@ app.post('/toggleLike', async (req, res) => {
       res.status(500).json({ error: 'Error al manejar el like' });
   }
 });
+
+app.post('/getComments', async (req, res) => {
+  const { limit } = req.body; // Opcionalmente, puedes pasar un límite desde el frontend
+
+  try {
+    const comments = await User.getComments(limit || 10); // Llama al método `getPosts` con un límite por defecto de 10
+    res.status(200).json(comments); // Envía la lista de posts al frontend
+  } catch (error) {
+    console.error('Error al obtener los comentarios:', error);
+    res.status(500).json({ message: 'Error al obtener los comentarios' }); // Manejo de errores
+  }
+})

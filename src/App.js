@@ -13,7 +13,7 @@ import './App.css'
 import { Information } from './pages/information.js'
 import { Profile } from './pages/profile.js'
 import { CreatePost } from './pages/CreatePost.js'
-import { ShowComments } from './complements/commentVisualization.js'
+import { CommentVisualization } from './complements/commentVisualization.js'
 function AnimatedRoutes () {
   const location = useLocation()
   return (
@@ -29,7 +29,7 @@ function AnimatedRoutes () {
           <Route path="/information/*" element={<Information />} />
           <Route path="/profile" element={<Profile />} />
           <Route path ="/create" element={<CreatePost />} />
-          <Route path ="/home/post/comments" element={<ShowComments />} />
+          <Route path ="/home/post/comments" element={<CommentVisualization />} /> 
         </Routes>
       </CSSTransition>
     </TransitionGroup>

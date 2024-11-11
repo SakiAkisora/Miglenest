@@ -126,10 +126,13 @@ export const PostVisualization = ({ setError, setHasPosts }) => {
               >
                 {post.likes} Likes
               </button>
-            <button className="border-2 border-black w-[32.2%]">Comentarios</button>
-            <button className="border-2 border-l-0 border-black w-[32.2%] rounded-br-xl">
-              Compartir
-            </button>
+            <link to="/home/post/comments">
+              <button 
+                  className={'border-2 border-black w-[32.2%] '}>Comentarios</button>
+              <button className="border-2 border-l-0 border-black w-[32.2%] rounded-br-xl">
+                Compartir
+              </button>
+            </link>
           </div>
         </div>
       ))}
