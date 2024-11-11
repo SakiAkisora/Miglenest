@@ -197,7 +197,7 @@ static async getPostById(decodedId) {
           postId,
         ]);
         // Decrementa el contador de likes en el post
-        await client.query('UPDATE posts SET likes = likes - 1 WHERE id_post = $1', [postId]);
+        await client.query('UPDATE post SET likes = likes - 1 WHERE id_post = $1', [postId]);
       } else {
         // Si no ha dado like, añadir el like
         await client.query(
@@ -205,11 +205,11 @@ static async getPostById(decodedId) {
           [userId, postId]
         );
         // Incrementa el contador de likes en el post
-        await client.query('UPDATE posts SET likes = likes + 1 WHERE id_post = $1', [postId]);
+        await client.query('UPDATE post SET likes = likes + 1 WHERE id_post = $1', [postId]);
       }
 
       // Obtén el nuevo número de likes
-      const updatedPost = await client.query('SELECT likes FROM posts WHERE id_post = $1', [postId]);
+      const updatedPost = await client.query('SELECT likes FROM post WHERE id_post = $1', [postId]);
 
       // Verifica que el post exista
       if (updatedPost.rows.length === 0) {
@@ -224,6 +224,32 @@ static async getPostById(decodedId) {
       client.release(); // Asegúrate de liberar el cliente de la base de datos
     }
   }
+  
+  static async userLikedPost(userId, postId) {
+    const result = await pool.query(
+      'SELECT * FROM likes WHERE id_user = $1 AND id_post = $2',
+      [userId, postId]
+    );
+    return result.rows.length > 0; // Si hay resultados, el usuario ya le dio like al post
+  }
+
+  static async searchPosts(query) {
+    console.log('Searching for query:', query);  // Verifica el valor de query
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM post WHERE title ILIKE $1',
+            [`%${query}%`]
+        );
+        console.log('Search result:', result.rows);  // Verifica los resultados
+        return result.rows;
+    } catch (error) {
+        console.error('Error executing query:', error);  // Manejo de errores
+        throw error;
+    }
+}
+  
+  
 }
 class Validation {
   
@@ -272,7 +298,7 @@ class Validation {
     if (postTitle.length > 30) throw new Error('Title must not be more than 30 characters long');
   }
 
-  static postDescription(postDescription) {
+  static postDescription(postTitle, postDescription) {
     if (typeof postDescription !== 'string') throw new Error('Description must be a string');
     if (postDescription.length < 4) throw new Error('Description must be at least 4 characters long');
     if (postDescription.length > 300) throw new Error('Description must not be more than 300 characters long');
@@ -290,20 +316,5 @@ class Validation {
       if (forbiddenWords.some(word => postTitle.toLowerCase().includes(word))) {
         throw new Error('Title contains inappropriate content');
       }      
-  }
-
-  static postDescription(postDescription) {
-      const forbiddenWords = [
-      // Español
-      'cabrón', 'pendejo', 'chingar', 'hijo de puta', 'güey', 'boludo', 'gil', 'gonorrea', 'marica', 'weón', 'conchetumadre', 'hijo de mil puta', 'mierda', 'chucha', 'concha de su madre',    
-      // Inglés
-      'asshole', 'bastard', 'cunt', 'motherfucker', 'shithead', 'dumbass', 'bitch','fuck'];
-    
-      if (typeof postDescription !== 'string') throw new Error('Description must be a string');
-      if (postDescription.length < 4) throw new Error('Description must be at least 4 characters long');
-      if (postDescription.length > 300) throw new Error('Description must not be more than 300 characters long');
-      if (forbiddenWords.some(word => postDescription.toLowerCase().includes(word))) {
-        throw new Error('Description contains inappropriate content');
-      }
   }
 }

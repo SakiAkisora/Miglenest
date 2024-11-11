@@ -80,6 +80,7 @@ app.post('/logout', (req, res) => {
       return res.status(500).send('Error en el logout');
     }
     res.json({ message: 'Logout successful' });
+
   });
 });
 
@@ -178,7 +179,7 @@ app.post('/getPosts', async (req, res) => {
 app.post('/toggleLike', async (req, res) => {
   // Verifica si el usuario está autenticado
   if (!req.session.user) {
-      return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized' }); // Enviar 401 para indicar que no está autorizado
   }
 
   const { postId } = req.body; // Obtiene el ID del post
@@ -186,36 +187,83 @@ app.post('/toggleLike', async (req, res) => {
 
   // Verifica que postId sea válido
   if (!postId) {
-      return res.status(400).json({ error: 'Post ID is required' });
+    return res.status(400).json({ error: 'Post ID is required' });
   }
 
   try {
-      // Llama al método toggleLike en el repositorio de usuarios
-      const likes = await User.toggleLike({ userId, postId });
-      res.json({ likes }); // Responde con el nuevo número de likes
+    // Llama al método toggleLike en el repositorio de usuarios
+    const likes = await User.toggleLike({ userId, postId });
+    res.json({ likes }); // Responde con el nuevo número de likes
   } catch (error) {
-      console.error('Error al actualizar el like:', error);
-      res.status(500).json({ error: 'Error al manejar el like' });
+    console.error('Error al actualizar el like:', error);
+    res.status(500).json({ error: 'Error al manejar el like' });
   }
 });
 // Ruta para obtener un post
-app.get('/:encodedId', async (req, res) => {
-  const encodedId = req.params.encodedId;
-  
-  // Decodificar el ID de Base64
-  const decodedId = Buffer.from(encodedId, 'base64').toString('utf-8');
+app.get('/watch', async (req, res) => {
+  const { p: encodedId } = req.query;  // Obtener el parámetro 'p' de la query string
 
-  // Asegúrate de que el valor decodificado sea un número
-  const decodedIdInt = parseInt(decodedId, 10);
-  if (isNaN(decodedIdInt)) {
-    return res.status(400).json({ message: 'ID inválido' });
+  if (!encodedId) {
+      return res.status(400).json({ message: 'ID no proporcionado' });
   }
 
   try {
-    const post = await User.getPostById(decodedIdInt); // Usa el valor como entero
-    res.json(post);
+      // Decodificar el ID de Base64
+      const decodedId = Buffer.from(encodedId, 'base64').toString('utf-8');
+      const decodedIdInt = parseInt(decodedId, 10);
+
+      if (isNaN(decodedIdInt)) {
+          return res.status(400).json({ message: 'ID inválido' });
+      }
+
+      // Obtener el post desde el modelo (suponiendo que usas User.getPostById)
+      const post = await User.getPostById(decodedIdInt);
+      res.json(post);
   } catch (error) {
-    console.error('Error al obtener el post:', error);
-    res.status(404).json({ message: 'Post no encontrado desde el servidor' });
+      console.error('Error al obtener el post:', error);
+      res.status(404).json({ message: 'Post no encontrado' });
+  }
+});
+
+app.post('/userLikedPost', async (req, res) => {
+  try {
+    const { postId } = req.body; // Obtiene el ID del post desde el body
+    const userId = req.session.user.id; // Obtiene el ID del usuario desde la sesión
+
+    // Comprobamos si el usuario ya ha dado like al post
+    const result = await pool.query(
+      'SELECT * FROM likes WHERE id_user = $1 AND id_post = $2',
+      [userId, postId]
+    );
+
+    // Si hay una fila en el resultado, significa que el usuario ya ha dado like al post
+    const userLiked = result.rows.length > 0;
+
+    // Devolvemos un objeto con el estado de "userLiked"
+    res.json({ userLiked });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error en la base de datos');
+  }
+});
+
+app.post('/search', async (req, res) => {
+  const { query } = req.body; // Obtener el parámetro de consulta "query" del cuerpo de la solicitud
+
+  console.log('Query parameter received:', query); // Verifica este valor
+
+  if (!query) {
+      console.log('No search query provided');
+      return res.status(400).json({ message: 'No search query provided' });
+  }
+
+  try {
+      const searchResults = await User.searchPosts(query);
+      console.log('Search results:', searchResults);
+      res.json(searchResults);
+  } catch (error) {
+      console.error('Error al buscar posts:', error.message);
+      res.status(500).json({ message: 'Error al buscar posts', error: error.message });
   }
 });
