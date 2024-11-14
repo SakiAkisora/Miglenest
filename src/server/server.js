@@ -189,16 +189,16 @@ app.post('/getUserId', isAuthenticated, (req, res) => {
 });
 
 app.post('/getPosts', async (req, res) => {
-  const { limit } = req.body; // Opcionalmente, puedes pasar un límite desde el frontend
-
+  const { limit } = req.body;
   try {
-    const posts = await User.getPosts(limit || 10); // Llama al método `getPosts` con un límite por defecto de 10
-    res.status(200).json(posts); // Envía la lista de posts al frontend
+    const posts = await User.getPosts(limit || 30);
+    console.log("Posts obtenidos:", posts); // Verificar respuesta aquí
+    res.status(200).json(posts);
   } catch (error) {
     console.error('Error al obtener los posts:', error);
-    res.status(500).json({ message: 'Error al obtener los posts' }); // Manejo de errores
+    res.status(500).json({ message: 'Error al obtener los posts' });
   }
-})
+});
 app.post('/toggleLike', async (req, res) => {
   // Verifica si el usuario está autenticado
   if (!req.session.user) {

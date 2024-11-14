@@ -14,35 +14,40 @@ export const PostVisualization = ({ setError, setHasPosts }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ limit: 0 }),
-          credentials: 'include', // Asegúrate de enviar cookies de sesión si estás usando autenticación basada en sesión
+          body: JSON.stringify({ limit: 20 }), // Cambia a un límite positivo
+          credentials: 'include',
         });
-
+    
         if (!response.ok) throw new Error('Error al obtener los posts');
-
+    
         const data = await response.json();
+    
         if (data.length === 0) {
           setHasPosts(false);
         } else {
           const processedData = data.map((post) => {
+            // Convertir la fecha de 'DD/MM/YYYY' a 'YYYY-MM-DD'
+            const [day, month, year] = post.creation_date.split('/');
+            const formattedDate = new Date(`${year}-${month}-${day}`);
+    
             return {
               ...post,
-              creation_date: new Date(post.creation_date),
-              formatted_creation_date: format(new Date(post.creation_date), 'dd/MM/yyyy'),
+              creation_date: formattedDate,
+              formatted_creation_date: format(formattedDate, 'dd/MM/yyyy'),
               likes: post.likes || 0,
             };
           });
-
+    
           setPosts(processedData);
           setHasPosts(true);
-
+    
           // Verificamos si el usuario ha dado like a los posts
           const likesStatus = {};
           for (const post of processedData) {
             const userLiked = await checkUserLikedPost(post.id_post);
             likesStatus[post.id_post] = userLiked;
           }
-          setUserLikes(likesStatus); // Guardamos el estado de los likes para cada post
+          setUserLikes(likesStatus);
         }
       } catch (error) {
         setError(error.message);
