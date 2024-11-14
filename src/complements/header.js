@@ -5,44 +5,43 @@ import lupa from '../assets/image/search.png';
 import menu from '../assets/image/menu.png';
 import profileIcon from '../assets/image/profileIcon.png';
 import mic from '../assets/image/microphone.png';
+import close from '../assets/image/close.png';
 
 export const HeaderMain = ({ isActive, toggleMenu }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [isMicActive, setIsMicActive] = useState(false)
+  const recognitionRef = useRef(null);
 
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
   // Función para iniciar el reconocimiento de voz
-  const startVoiceRecognition = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'es-ES'; // Configura el idioma al español
-      recognition.continuous = true; // Mantiene el reconocimiento en curso
-
-      // Evento cuando se detecta un resultado
-      recognition.onresult = (event) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
+  const startRecognition = () => {
+    // Si ya hay un reconocimiento activo, no creamos uno nuevo
+    if (!recognitionRef.current) {
+      recognitionRef.current = new window.webkitSpeechRecognition();
+      recognitionRef.current.lang = 'es-ES'
+      recognitionRef.current.continuous = true
+      recognitionRef.current.onresult = (event) => {
+        for (const result of event.results) {
+          setSearchQuery(result[0].transcript)
         }
-        setSearchQuery(transcript); // Asigna el texto reconocido al campo de búsqueda
       };
-
-      // Evento de error
-      recognition.onerror = (event) => {
-        console.error('Error en el reconocimiento de voz:', event.error);
-      };
-
-      // Inicia el reconocimiento
-      recognition.start();
-    } else {
-      alert('El reconocimiento de voz no es compatible con este navegador.');
+      recognitionRef.current.start()
+      setIsMicActive(true)
     }
   };
+
+  const stopRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop() // Detenemos el reconocimiento en curso
+      recognitionRef.current = null // Limpiamos la referencia
+      setIsMicActive(false)
+    }
+  }
 
   const handleLoginClick = () => {
     navigate('/login');
@@ -125,6 +124,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
+
         setIsMenuActive(false);
       }
     };
@@ -159,8 +159,13 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
           <input
             className="flex-1 p-[5px] text-base border-[2px] border-gray-300 rounded-tl-lg rounded-bl-lg w-[500px] focus:outline-none"
             placeholder="Buscar"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchQuery} // Esto debería actualizarse con la transcripción
+            onChange={(e) => setSearchQuery(e.target.value)} // Actualiza el estado cuando el usuario escribe
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch(searchQuery);
+              }
+            }}
           />
           <button
             className="bg-white border-none p-[5px] rounded-tr-[10px] rounded-br-[10px] border-[2px] border-gray-300"
@@ -173,10 +178,26 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
             <img className="w-[17px] h-[17px]" src={lupa} alt="Buscar" />
           </button>
         </div>
-
-        <button onClick={startVoiceRecognition} className="bg-white rounded-full w-[40px] mt-[0.8%] ml-[-12.5%] p-[0.3%] mr-[13%]">
-          <img src={mic} alt="STT" />
-        </button>
+        <div className='bg-white rounded-full h-[38px] w-[38px] p=[1%] mt-[0.8%] ml-[-12.5%] mr-[13%]'>
+          {isMicActive ? (
+            
+            <button
+            onClick={stopRecognition} 
+            className="text-[#6312aa] text-[30px] center">
+            <img src={ close } alt ='Close STT button'/>
+          </button>
+          ) : (
+            <button
+              onClick={startRecognition}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch(searchQuery);
+                }
+              }} className="w-full">
+              <img src={mic} alt="STT" />
+            </button>
+        )}
+        </div>
 
         <div className="sesion">
           <div className="mt-[10px] h-[30px] p-[2px_10px] text-[#6312aa]">
@@ -189,6 +210,7 @@ export const HeaderMain = ({ isActive, toggleMenu }) => {
                   </button>
                   {isMenuActive && (
                     <div ref={menuRef} className="absolute text-black bg-gray-300 mt-[10px] ml-[-140px] text-xl rounded-lg">
+
                       <button onClick={() => navigate('/profile')} className="text-left p-[10px] pb-3 hover:bg-white rounded-lg w-full">Perfil</button>
                       <button onClick={handleLogout} className="p-[10px] hover:bg-white rounded-lg">Cerrar sesión</button>
                     </div>

@@ -18,7 +18,7 @@ export const CreatePost = () => {
       try {
         const response = await fetch('http://localhost:4000/getUserId', {
           method: 'POST',
-          credentials: 'include'
+          credentials: 'include' // Incluye las cookies en la solicitud
         });
 
         if (response.ok) {
