@@ -85,7 +85,7 @@ export class User {
       profile_img: user.profile_img,
       background: user.background,
       desc: user.description,
-      join_date: formattedDate
+      join_date: formattedDate,        
     }
   }
   static async createPost({ title, description, fyle, typefile, id_category, id_user }) {

@@ -19,6 +19,9 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Especifica el origen permitido
   credentials: true // Habilita el envío de cookies
 };
+const requestOptions = {
+  method: ['GET', 'POST'],
+};
 
 app.use(cors(corsOptions));
 
@@ -48,17 +51,19 @@ app.get('/', (req, res) => {
   res.render('index', user);
 });
 
+
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.login({ email, password });
-    // Guarda el usuario en la sesión
+    const user = await User.login({ email, password });        
     req.session.user = {
       id: user.iduser, // Guarda el id del usuario
-      username: user.username,
-    };
-
-    res.json(user); // Envía la información del usuario como respuesta
+      username: user.username,            
+    };        
+    fetch("https://api.geoapify.com/v1/ipinfo?&apiKey=f0237d2dae2b40419b79b8a428b29a4a", requestOptions)
+    .then(response => response.json())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
   } catch (error) {
     res.status(400).send(error.message);
   }
