@@ -1,0 +1,16 @@
+* {
+  margin: 0px;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+@font-face {
+  font-family: 'Clockwise';
+  src: url('./assets/fonts/Clockwise.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
