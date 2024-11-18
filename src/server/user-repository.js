@@ -21,7 +21,7 @@ export class User {
       // Verificar si ya existe el usuario
       const queryText = 'SELECT * FROM public.normaluser WHERE username = $1 OR email = $2'
       const result = await client.query(queryText, [username, email])
-      if (result.rows.length > 0 || result.rows.length > 0) {
+      if (result.rows.length > 0 ) {
         throw new Error('Username or email already exists')
       }
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
@@ -43,7 +43,7 @@ export class User {
   }
   static async findOne({ username }) {
     const queryText = 'SELECT username, profile_img, background, description AS desc, creation_date FROM public.normalUser WHERE username = $1'
-    const result = await pool.query(queryText, [username]) && await pool.query(queryText, [username])
+    const result = await pool.query(queryText, [username])
     if (result.rows.length === 0) return null // Si no se encuentra el usuario
     const user = result.rows[0]
     // Formatea la fecha de creación a 'DD/MM/YYYY'
@@ -65,11 +65,11 @@ export class User {
     const client = await pool.connect()
     const queryText = 'SELECT * FROM public.normalUser WHERE email = $1'
     const result = await client.query(queryText, [email])
-    // Verificar si el usuario no existe
-    const user = result.rows[0]
+    // Verificar si el usuario no existe    
     if (result.rows.length === 0) {
       throw new Error('The user does not exist')
     }
+    const user = result.rows[0]
     const isValid = await bcrypt.compare(password, user.password)
     if (!isValid) throw new Error('Invalid password')
     // const { password: _, ...publicUser } = user
@@ -128,40 +128,40 @@ export class User {
     }
 }
 // En tu User Repository
-static async getPostById(decodedId) {
-  const queryText = `
-    SELECT p.id_post, p.title, p.description, p.creation_date, p.fyle,
-           COALESCE(COUNT(l.id_user), 0) AS likes
-    FROM public.post p
-    LEFT JOIN likes l ON p.id_post = l.id_post
-    WHERE p.id_post = $1
-    GROUP BY p.id_post;
-  `;
+  static async getPostById(decodedId) {
+    const queryText = `
+      SELECT p.id_post, p.title, p.description, p.creation_date, p.fyle,
+            COALESCE(COUNT(l.id_user), 0) AS likes
+      FROM public.post p
+      LEFT JOIN likes l ON p.id_post = l.id_post
+      WHERE p.id_post = $1
+      GROUP BY p.id_post;
+    `;
 
-  try {
-    const result = await pool.query(queryText, [decodedId]);
-    
-    if (result.rows.length === 0) {
-      throw new Error('Post no encontrado');
+    try {
+      const result = await pool.query(queryText, [decodedId]);
+      
+      if (result.rows.length === 0) {
+        throw new Error('Post no encontrado');
+      }
+
+      // Formateo de la fecha de creación a 'DD/MM/YYYY'
+      const post = result.rows[0];
+      const formattedDate = new Date(post.creation_date).toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+
+      return {
+        ...post,
+        creation_date: formattedDate,
+      };
+    } catch (error) {
+      console.error('Error al obtener el post:', error);
+      throw new Error('Ocurrió un problema al intentar obtener el post');
     }
-
-    // Formateo de la fecha de creación a 'DD/MM/YYYY'
-    const post = result.rows[0];
-    const formattedDate = new Date(post.creation_date).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-
-    return {
-      ...post,
-      creation_date: formattedDate,
-    };
-  } catch (error) {
-    console.error('Error al obtener el post:', error);
-    throw new Error('Ocurrió un problema al intentar obtener el post');
   }
-}
   static async toggleLike({ userId, postId }) {
     const client = await pool.connect();
     try {
@@ -221,35 +221,39 @@ static async getPostById(decodedId) {
         console.error('Error executing query:', error);  // Manejo de errores
         throw error;
     }
-}
-  static async getComments(limit = 30) {
+  }
+  static async getComments( id_post) {
     const queryText = `
-      SELECT c.id_comment, c.content, c.creation_date             
-      FROM public.comment c      
-      GROUP BY p.id_comment
-      ORDER BY p.creation_date DESC
-      LIMIT $1;
+      SELECT * FROM public.comment c
+      WHERE id_post=$1         
+      ORDER BY c.creation_date DESC
+      LIMIT 20;
     `;
 
     try {
-      const result = await pool.query(queryText, [limit]);
-      return result.rows.map(comments => {
-        // Formateo de la fecha de creación a 'DD/MM/YYYY' para cada post
-        const formattedDate = new Date(comments.creation_date).toLocaleDateString('es-ES', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        });
+      const result = await pool.query(queryText, [id_post]);
+      return result.rows.map(comments => {        
         return {
-          ...comments,
-          creation_date: formattedDate,
+          ...comments,          
         };
       });
     } catch (error) {
       console.error('Error al obtener los comentarios:', error);
       throw new Error('Ocurrió un problema al intentar obtener los comentarios');
     }
-}
+  }
+  static async addComment({ id_user, id_post, comment }){
+    try{
+      const result = await pool.query(
+        'INSERT INTO comment (id_user, id_post, comment, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
+        [id_user, id_post, comment]
+      )
+      return result.rows[0]
+    }catch(error){
+      console.error('Error al agregar el comentario: ', error)
+      throw new Error('No se pudo agregar el comentario')
+    }
+  }
 }
 class Validation {  
   static username(username) {
@@ -267,8 +271,7 @@ class Validation {
     if (!/^[a-zA-Z0-9_]+$/.test(username)) throw new Error('Username can only contain letters, numbers, and underscores');    
     return username;
   }
-  static email(email) {
-      if (typeof email !== 'string') throw new Error('Email must be a string');
+  static email(email) {      
       email = email.trim()
       if (email.length === 0) throw new Error ("Email cannot be empty");
       if (!email.includes('@')) throw new Error('Invalid email format');
@@ -283,7 +286,7 @@ class Validation {
       if (!/[a-z]/.test(password)) throw new Error('Password must contain at least one lowercase letter');
       if (!/[0-9]/.test(password)) throw new Error('Password must contain at least one number (0 - 9)');
       if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) throw new Error('Password must contain at least one special character');      
-      if (this.email === password || this.username === password) throw new Error('Password cannot be same as email or username');
+      if (User.email === password || User.username === password) throw new Error('Password cannot be same as email or username');
   }
   static postTitle(postTitle) {
     if (typeof postTitle !== 'string') throw new Error('Title must be a string');

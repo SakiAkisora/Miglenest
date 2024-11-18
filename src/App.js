@@ -35,7 +35,7 @@ function AnimatedRoutes () {
           <Route path="/watch" element={<PostPage />} />
           <Route path="/search" element={<SearchPostsResults />} />
           <Route path ="/create" element={<CreatePost />} />
-          <Route path ="/home/post/comments" element={<CommentVisualization />} /> 
+          <Route path ="/:id_post/comments" element={<CommentVisualization />} /> 
         </Routes>
       </CSSTransition>
     </TransitionGroup>

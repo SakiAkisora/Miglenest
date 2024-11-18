@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
@@ -158,17 +159,18 @@ export const PostVisualization = ({ setError, setHasPosts }) => {
               onClick={() => handleLikeClick(post)}
             >
               {post.likes} Likes
-            </button>            
-            <button 
-                  className={'border-2 border-black w-[32.2%] '}>Comentarios</button>            
+            </button>
+            <Link to={`/${post.id_post}/comments`} >
+              <button className={'border-2 border-black w-[100%] '}>Comentarios</button>
+            </Link>
             <button
               className="border-2 border-l-0 border-black w-full rounded-br-xl"
               onClick={() => shareAcross(post)}
             >
               Compartir
-            </button>            
-          </div>    
-        </div>    
+            </button>
+          </div>
+        </div>
       ))}
     </div>
   );

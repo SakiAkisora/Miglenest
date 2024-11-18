@@ -19,9 +19,6 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Especifica el origen permitido
   credentials: true // Habilita el envío de cookies
 };
-const requestOptions = {
-  method: ['GET', 'POST'],
-};
 
 app.use(cors(corsOptions));
 
@@ -57,13 +54,16 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.login({ email, password });        
     req.session.user = {
-      id: user.iduser, // Guarda el id del usuario
+      id: user.id_user, // Guarda el id del usuario
       username: user.username,            
-    };        
+    };       
+    /* 
     fetch("https://api.geoapify.com/v1/ipinfo?&apiKey=f0237d2dae2b40419b79b8a428b29a4a", requestOptions)
     .then(response => response.json())
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
+    */
+    res.status(200).send({ message: 'Login successful' });
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -273,14 +273,34 @@ app.post('/search', async (req, res) => {
   }
 });
 
-app.post('/getComments', async (req, res) => {
-  const { limit } = req.body; // Opcionalmente, puedes pasar un límite desde el frontend
-
+app.post('/comments', async (req, res) => {
+  const { id_post } = req.body; // Opcionalmente, puedes pasar un límite desde el frontend  
   try {
-    const comments = await User.getComments(limit || 10); // Llama al método `getPosts` con un límite por defecto de 10
+    const comments = await User.getComments(id_post); // Llama al método `getPosts` con un límite por defecto de 10
     res.status(200).json(comments); // Envía la lista de posts al frontend
   } catch (error) {
     console.error('Error al obtener los comentarios:', error);
     res.status(500).json({ message: 'Error al obtener los comentarios' }); // Manejo de errores
+  }
+})
+app.post('/addComment', async (req, res) => {
+  const { id_post, comment} = req.body
+  const userId = req.session.user?.id
+  if(!userId){
+    return res.status(401).json({message: 'Usuario no autenticado'})
+  }
+  if(!id_post || !comment){
+    return res.status(400).json({ message: 'Faltan datos necesarios (id_post o comentario)' }); // Validar los datos requeridos
+  }
+  try{
+    const newComment = await User.addComment({
+      id_user: userId,
+      id_post,
+      comment
+    })
+    res.status(201).json({ message: 'Comentario agregado con exito', comment: newComment});    
+  }catch(error){
+    console.error('Error al agregar el comentario: ', error)
+    res.status(500).json({message: 'Error al agregar el comentario', error: error.message})
   }
 })
