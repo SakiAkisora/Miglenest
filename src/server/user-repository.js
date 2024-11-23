@@ -254,6 +254,9 @@ export class User {
       throw new Error('No se pudo agregar el comentario')
     }
   }
+  static async findOrCreate({githubId}){
+
+  }
 }
 class Validation {  
   static username(username) {

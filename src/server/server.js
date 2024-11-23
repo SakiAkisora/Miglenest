@@ -6,22 +6,20 @@ import { fileURLToPath } from 'url';
 import { PORT, SECRET_JWT_KEY } from './config.js';
 import { pool, User } from './user-repository.js';
 import multer from 'multer';
-
+import passport from 'passport';
+import passportGitHub from 'passport-github2';
+const GitHubStrategy = passportGitHub.Strategy
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-app.use(express.json());
-
+app.use(express.json())
 // Configuración de CORS
 const corsOptions = {
   origin: 'http://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Especifica el origen permitido
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Habilita el envío de cookies
 };
-
 app.use(cors(corsOptions));
-
 // Configuración de la sesión
 app.use(session({
   secret: SECRET_JWT_KEY,
@@ -29,20 +27,62 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false } // Cambiar a true si usas HTTPS
 }));
-
 const isAuthenticated = (req, res, next) => {
   if (req.session.user) {
     return next();
   }
   res.status(401).send('Unauthorized');
 };
-
 // Middleware para extraer información del usuario de la sesión
 app.use((req, res, next) => {
   req.session.user = req.session.user || null; // Mantener la sesión
   next();
 });
+//configuracio inicio de terceros - GitHub
+passport.use(new GitHubStrategy({
+  clientID: 'Ov23liMuZBuqGDWfwAIA',
+  clientSecret: '7f95cc6ca433e5039dcb41a1b6ebc91d731c7ca4',
+  callbackURL: "http://localhost:4000/auth/github/callback"
+},
+async (accessToken, refreshToken, profile, done) => {
+  return done(null,profile)//esto va al final, si ocupas lo de abajo elimina esta linea
+  /*
+  const user =await User.findOne({ 
+    id_user: profile.id,        
+  });
+  if(!user){
+    console.log('Adding a new GitHub user to DB...')
+    const user = await User.create({
+      id_user: profile.id,
+      username: profile.username,
+      email: profile.emails?.[0]?.value || null,
+    })
+    await user.save()
+    //console.log(user) //vericar la informacionde user
+    return done(null,profile)
+  }else{
+    console.log('GitHub user already exist in DB...')
+    return done(null.profile)
+  }
+}
+*/
+}));
+passport.serializeUser((user, done) => {
+  done (null, user)
+})
+passport.deserializeUser((user, done) => {
+  done(null, user)
+})
+app.use(passport.initialize())
+app.use(passport.session())
+app.get('/auth/github',
+  passport.authenticate('github', { scope: [ 'user:email' ] }));
 
+app.get('/auth/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/login' }),    
+ (req, res) => {
+  res.redirect("http://localhost:3000/home");
+})
 app.get('/', (req, res) => {
   const { user } = req.session;
   res.render('index', user);
@@ -56,14 +96,27 @@ app.post('/login', async (req, res) => {
     req.session.user = {
       id: user.id_user, // Guarda el id del usuario
       username: user.username,            
-    };       
-    /* 
-    fetch("https://api.geoapify.com/v1/ipinfo?&apiKey=f0237d2dae2b40419b79b8a428b29a4a", requestOptions)
-    .then(response => response.json())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
-    */
-    res.status(200).send({ message: 'Login successful' });
+    };               
+    const geoapifyApiKey = 'f0237d2dae2b40419b79b8a428b29a4a'
+    const apiUrl = `https://api.geoapify.com/v1/ipinfo?&apiKey=${geoapifyApiKey}`
+    const response = await fetch(apiUrl)
+    const geoData = await response.json()
+    if (!response.ok) {
+      return res.status(500).json({ message: 'Failed to fetch Geoapify data' });
+    }
+    const country = geoData.country?.name || 'Unknown'
+    const region = geoData.state?.name || 'Unknown'
+    const language = geoData.country?.languages?.[0]?.iso_code || 'en'
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        username: user.username,
+        country,
+        region,
+        language,
+      },
+    })
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -111,7 +164,6 @@ app.post('/createPost', upload.single('file'), async (req, res) => {
   if (!req.session.user) {
     return res.status(401).send('Unauthorized');
   }
-
   try {
     // Cambia la ruta para almacenar en la base de datos
     const filePath = `uploads/post/${req.file.filename}`; // Almacena la ruta relativa

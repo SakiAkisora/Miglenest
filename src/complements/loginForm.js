@@ -62,7 +62,9 @@ export const LoginForm = () => {
       console.error('Error al iniciar sesión:', data.error)
     }
   }
-
+  const handleGitHubLogin = async () => {
+    window.location.href = "http://localhost:4000/auth/github"; // Redirigir al flujo de autenticación de GitHub
+  };
   // Manejo de cambios de entrad
   return (
     <div>
@@ -115,6 +117,11 @@ export const LoginForm = () => {
                 />
                 <button type="submit">Iniciar Sesión</button>
               </form>
+              <div>
+                <button onClick={handleGitHubLogin} className="btnGitHub">
+                  Iniciar con GitHub
+                </button>
+              </div>
               <div className='options__account'>
                 <span><a href='#'>¿Olvidaste tu contraseña?</a></span>
                 <span><a href='/home'>Volver a inicio</a></span>
